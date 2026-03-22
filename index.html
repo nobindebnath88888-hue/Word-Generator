@@ -353,7 +353,7 @@ body.light .mob-tab.active{color:#7a3000;border-bottom-color:#b8860b;text-shadow
 
       <!-- Hex Board -->
       <div class="board-outer">
-        <canvas id="gc" width="320" height="360"></canvas>
+        <canvas id="gc" width="340" height="340"></canvas>
         <div id="board-notif"><div class="bn-title" id="bn-title"></div><div class="bn-sub" id="bn-sub"></div></div>
       </div>
 
@@ -464,9 +464,27 @@ const GAME_DURATION=5*60*1000; // 5 minutes
 
 // ── Board themes ───────────────────────────────────────────
 const THEMES=[
-  {name:'Pearl',   bg:'#f5f4f0',hexRing:'#ffffff',hexRingHov:'#dde8ff',hexCenter:'#f0c040',hexCenterHov:'#ffe680',ringText:'#14203a',centerText:'#050b18',outline:'rgba(140,130,110,.5)',dark:false},
-  {name:'Midnight',bg:'#0c1220',hexRing:'#1a2840',hexRingHov:'#243354',hexCenter:'#b8860b',hexCenterHov:'#d4a017',ringText:'#b8cce8',centerText:'#050b18',outline:'rgba(60,100,180,.5)',dark:true},
-  {name:'Parchment',bg:'#f0e6cc',hexRing:'#fdf4e4',hexRingHov:'#ece0c8',hexCenter:'#d4a017',hexCenterHov:'#e8b820',ringText:'#32200a',centerText:'#050b18',outline:'rgba(105,75,40,.4)',dark:false},
+  {name:'Pearl',
+   bg:'#f5f4f0',
+   ringBg:'#e8e8e8',ringStroke:'#c8c0b0',ringStrokeW:2,
+   dotFill:'#ffffff',dotHov:'#dde8ff',dotStroke:'rgba(140,130,110,.45)',
+   letterColor:'#14203a',
+   centerFill:'#f47c00',centerHov:'#ff9520',centerStroke:'rgba(0,0,0,.18)',
+   centerLetterColor:'#ffffff',dark:false},
+  {name:'Midnight',
+   bg:'#0c1220',
+   ringBg:'#141e30',ringStroke:'rgba(60,100,180,.5)',ringStrokeW:1.5,
+   dotFill:'#1a2840',dotHov:'#243354',dotStroke:'rgba(60,100,180,.4)',
+   letterColor:'#b8cce8',
+   centerFill:'#e06a00',centerHov:'#f07a10',centerStroke:'rgba(0,0,0,.35)',
+   centerLetterColor:'#ffffff',dark:true},
+  {name:'Parchment',
+   bg:'#f0e6cc',
+   ringBg:'#e8d8b0',ringStroke:'rgba(105,75,40,.4)',ringStrokeW:2,
+   dotFill:'#fdf4e4',dotHov:'#ece0c8',dotStroke:'rgba(105,75,40,.35)',
+   letterColor:'#32200a',
+   centerFill:'#e05f00',centerHov:'#f07010',centerStroke:'rgba(0,0,0,.15)',
+   centerLetterColor:'#ffffff',dark:false},
 ];
 
 // ── Letter sets (curated for good word density — 7 ring letters) ────────────
@@ -534,42 +552,27 @@ let _myTeam=null,_oppTeam=null;
 let _lastWinner=null;
 
 // ── Hex board drawing ──────────────────────────────────────
-function getHexParams(cv){
-  // For 7 hexes in the ring we need a larger orbit distance
-  // r = hex radius, d = orbit distance from center to ring hex centers
-  const r=Math.min(cv.width,cv.height)/8.2;
-  const d=r*2.05;
-  const cx=cv.width/2;
-  const cy=cv.height/2;
-  return{r,d,cx,cy};
+// ── Ring geometry ─────────────────────────────────────────
+function getRingParams(cv){
+  const sz=Math.min(cv.width,cv.height);
+  const cx=cv.width/2, cy=cv.height/2;
+  const outerR=sz*0.46;   // outer edge of the ring
+  const innerR=sz*0.22;   // inner edge of the ring (where center circle ends)
+  const midR=(outerR+innerR)/2; // where letter dots sit
+  const dotR=sz*0.095;    // radius of each letter dot on the ring
+  const centerR=innerR*0.88; // radius of the center orange circle
+  return{cx,cy,outerR,innerR,midR,dotR,centerR,sz};
 }
 
-function hexPositions(cv){
-  const{r,d,cx,cy}=getHexParams(cv);
-  // 0 = center; 1-7 = ring (clockwise from top), 7 letters in ring
-  const pos=[{x:cx,y:cy}];
+function ringPositions(cv){
+  const p=getRingParams(cv);
+  // index 0 = center; 1-7 = ring letters clockwise from top
+  const pos=[{x:p.cx,y:p.cy}];
   for(let i=0;i<7;i++){
     const a=-Math.PI/2+i*(2*Math.PI/7);
-    pos.push({x:cx+d*Math.cos(a),y:cy+d*Math.sin(a)});
+    pos.push({x:p.cx+p.midR*Math.cos(a), y:p.cy+p.midR*Math.sin(a)});
   }
-  return{pos,r};
-}
-
-function drawHex(ctx,x,y,r,fill,stroke,lw,letter,textColor){
-  ctx.beginPath();
-  for(let i=0;i<6;i++){
-    const a=Math.PI/6+i*(Math.PI/3);
-    i===0?ctx.moveTo(x+r*Math.cos(a),y+r*Math.sin(a)):ctx.lineTo(x+r*Math.cos(a),y+r*Math.sin(a));
-  }
-  ctx.closePath();
-  ctx.fillStyle=fill;ctx.fill();
-  ctx.strokeStyle=stroke;ctx.lineWidth=lw;ctx.stroke();
-  if(letter){
-    ctx.fillStyle=textColor;
-    ctx.font=`700 ${Math.round(r*.52)}px 'Cinzel',serif`;
-    ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(letter,x,y);
-  }
+  return{pos,params:p};
 }
 
 function paint(){
@@ -577,30 +580,88 @@ function paint(){
   if(!cv)return;
   const ctx=cv.getContext('2d');
   const T=THEMES[_tIdx];
-  ctx.fillStyle=T.bg;ctx.fillRect(0,0,cv.width,cv.height);
+  ctx.clearRect(0,0,cv.width,cv.height);
+  ctx.fillStyle=T.bg; ctx.fillRect(0,0,cv.width,cv.height);
   if(!_letters)return;
 
-  const{pos,r}=hexPositions(cv);
-  const lw=T.dark?1.5:2;
+  const{pos,params:p}=ringPositions(cv);
 
-  // Ring hexes (indices 1-7)
+  // ── Draw outer ring (annulus) ──
+  // Outer filled disc
+  ctx.beginPath();
+  ctx.arc(p.cx,p.cy,p.outerR,0,Math.PI*2);
+  ctx.fillStyle=T.ringBg; ctx.fill();
+  ctx.strokeStyle=T.ringStroke; ctx.lineWidth=T.ringStrokeW; ctx.stroke();
+
+  // Punch out inner hole to make it a true ring
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(p.cx,p.cy,p.innerR,0,Math.PI*2);
+  ctx.clip();
+  ctx.fillStyle=T.bg;
+  ctx.fillRect(0,0,cv.width,cv.height);
+  ctx.restore();
+
+  // Inner ring stroke (border between ring and center)
+  ctx.beginPath();
+  ctx.arc(p.cx,p.cy,p.innerR,0,Math.PI*2);
+  ctx.strokeStyle=T.ringStroke; ctx.lineWidth=T.ringStrokeW; ctx.stroke();
+
+  // ── Draw 7 letter dots on the ring ──
+  const fontSize=Math.round(p.dotR*0.72);
   for(let i=1;i<=7;i++){
-    const p=pos[i];
+    const pt=pos[i];
     const hov=_hovHex===i;
-    const fill=hov?T.hexRingHov:T.hexRing;
-    drawHex(ctx,p.x,p.y,r*0.96,fill,T.outline,lw,_letters.ring[i-1],T.ringText);
+    // Shadow on hover
+    if(hov){
+      ctx.save();
+      ctx.shadowColor='rgba(244,124,0,.45)';
+      ctx.shadowBlur=12;
+    }
+    ctx.beginPath();
+    ctx.arc(pt.x,pt.y,p.dotR,0,Math.PI*2);
+    ctx.fillStyle=hov?T.dotHov:T.dotFill; ctx.fill();
+    ctx.strokeStyle=hov?'rgba(244,124,0,.7)':T.dotStroke;
+    ctx.lineWidth=hov?2:1.5; ctx.stroke();
+    if(hov)ctx.restore();
+    // Letter
+    ctx.fillStyle=hov?'#f47c00':T.letterColor;
+    ctx.font=`700 ${fontSize}px 'Cinzel',serif`;
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(_letters.ring[i-1],pt.x,pt.y);
   }
 
-  // Center hex (index 0) — always gold-tinted
-  const cp=pos[0];
+  // ── Draw center orange circle ──
   const chov=_hovHex===0;
-  drawHex(ctx,cp.x,cp.y,r*0.96,chov?T.hexCenterHov:T.hexCenter,'rgba(0,0,0,.18)',2.5,_letters.center,T.centerText);
+  // Glow on hover
+  if(chov){
+    ctx.save();
+    ctx.shadowColor='rgba(244,124,0,.6)';
+    ctx.shadowBlur=18;
+  }
+  // Gradient fill for center
+  const grd=ctx.createRadialGradient(p.cx-p.centerR*.2,p.cy-p.centerR*.2,p.centerR*.1,p.cx,p.cy,p.centerR);
+  grd.addColorStop(0, chov?'#ffb040':'#ff9020');
+  grd.addColorStop(1, chov?T.centerHov:T.centerFill);
+  ctx.beginPath();
+  ctx.arc(p.cx,p.cy,p.centerR,0,Math.PI*2);
+  ctx.fillStyle=grd; ctx.fill();
+  ctx.strokeStyle=T.centerStroke; ctx.lineWidth=2; ctx.stroke();
+  if(chov)ctx.restore();
+  // Center letter
+  ctx.fillStyle=T.centerLetterColor;
+  ctx.font=`900 ${Math.round(p.centerR*.62)}px 'Cinzel',serif`;
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(_letters.center,p.cx,p.cy);
 }
 
 function getHexAt(px,py,cv){
-  const{pos,r}=hexPositions(cv);
-  for(let i=0;i<pos.length;i++){
-    if(Math.hypot(px-pos[i].x,py-pos[i].y)<r*0.94)return i;
+  const{pos,params:p}=ringPositions(cv);
+  // Check center first
+  if(Math.hypot(px-pos[0].x,py-pos[0].y)<p.centerR)return 0;
+  // Check ring dots
+  for(let i=1;i<=7;i++){
+    if(Math.hypot(px-pos[i].x,py-pos[i].y)<p.dotR*1.1)return i;
   }
   return null;
 }
@@ -616,22 +677,22 @@ function resizeCanvas(){
     const vw=window.innerWidth;
     const vh=window.innerHeight;
     const maxH=vh-260;
-    w=Math.min(vw-10,maxH*(300/340),300);
+    w=Math.min(vw-10,maxH,300);
     w=Math.max(w,200);
   } else {
     const colW=col.clientWidth||480;
     const maxH=window.innerHeight-290;
-    w=Math.min(colW-20,maxH*(300/340),360);
+    w=Math.min(colW-20,maxH,340);
     w=Math.max(w,240);
   }
-  const h=Math.round(w*360/320);
+  const h=w; // square canvas — ring fits perfectly
   cv.width=w;cv.height=h;cv.style.width=w+'px';cv.style.height=h+'px';
   paint();
 }
 
 // ── Canvas interaction ─────────────────────────────────────
 function canvasClick(e){
-  if(!GS||GS.winner||_elim[myColor]||_validating)return;
+  if(!GS||GS.winner||_validating)return;
   const cv=document.getElementById('gc');
   const rect=cv.getBoundingClientRect();
   const sx=cv.width/rect.width,sy=cv.height/rect.height;
@@ -695,7 +756,7 @@ async function isValidWord(word){
 // ── Submit word ────────────────────────────────────────────
 async function submitWord(){
   const inp=document.getElementById('bee-input');
-  if(!inp||!GS||GS.winner||_elim[myColor]||_validating)return;
+  if(!inp||!GS||GS.winner||_validating)return;
   const word=inp.value.toLowerCase().trim();
   if(!word){inp.focus();return;}
   inp.value='';
@@ -1012,7 +1073,7 @@ function startGame(rid){
   });
   document.getElementById('resbtn').addEventListener('click',resign);
   document.getElementById('drawbtn').addEventListener('click',()=>{
-    if(GS?.winner||_elim[myColor])return;
+    if(GS?.winner)return;
     update(ref(db,`beeRooms/${roomId}/drawVotes`),{[myColor]:true});
     showToast('Draw proposed…');
   });
