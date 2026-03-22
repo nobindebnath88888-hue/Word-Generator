@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Strategy Hub — Team Spelling Bee</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden}
+body{background:#0a1628;background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(26,51,96,.55) 0%,transparent 60%);font-family:'Crimson Text',serif;color:#e8d5a0;transition:background .35s,color .35s}
+.screen{display:none;width:100vw;height:100vh}
+.screen.active{display:flex}
+#ls{align-items:center;justify-content:center}
+
+/* ── Login ──────────────────────────────────────────────── */
+.lw{display:flex;flex-direction:column;align-items:center;gap:22px;padding:20px}
+.crown{font-size:52px;text-align:center;filter:drop-shadow(0 0 18px rgba(212,160,23,.65));animation:fl 3s ease-in-out infinite}
+@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.gtitle{font-family:'Cinzel',serif;font-size:clamp(24px,5vw,48px);font-weight:900;letter-spacing:.16em;background:linear-gradient(135deg,#b8860b,#f0c040,#ffe680,#b8860b);background-size:300%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:sh 4s ease infinite;text-align:center}
+@keyframes sh{0%{background-position:0 50%}50%{background-position:100% 50%}100%{background-position:0 50%}}
+.gsub{font-style:italic;font-size:14px;color:#9080a0;text-align:center;margin-top:2px}
+.lcard{background:rgba(8,14,30,.97);border:1px solid rgba(180,140,50,.28);border-radius:16px;padding:26px;width:min(440px,93vw);display:flex;flex-direction:column;gap:14px;box-shadow:0 0 60px rgba(0,0,0,.75)}
+input[type=text]{width:100%;background:rgba(8,16,40,.85);border:1px solid #1e3a6e;border-radius:7px;color:#e8d5a0;font-family:'Cinzel',serif;font-size:13px;padding:10px 13px;outline:none;transition:border-color .2s}
+input[type=text]::placeholder{color:#506080;font-family:'Crimson Text',serif;font-style:italic}
+input[type=text]:focus{border-color:#b8860b;box-shadow:0 0 10px rgba(180,140,50,.2)}
+.lbl{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.14em;color:#7080a0;text-transform:uppercase}
+.ccs{display:flex;gap:8px}
+.cc{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;padding:8px 5px;border-radius:8px;border:2px solid transparent;transition:all .2s;flex:1}
+.cc:hover{background:rgba(255,255,255,.06)}
+.cc.sel{border-color:var(--c);background:rgba(255,255,255,.09)}
+.csw{width:28px;height:28px;border-radius:50%;background:var(--c);border:2px solid rgba(255,255,255,.22)}
+.cc span{font-family:'Cinzel',serif;font-size:10px;color:#7080a0}
+.tbox{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.03);border-radius:7px;padding:9px;border:1px solid rgba(255,255,255,.07)}
+.tb{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.tl{font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:.09em}
+.ta .tl{color:#e05050}.tb2 .tl{color:#40b060}
+.tm{font-size:11px;color:#506080;font-style:italic}
+.vsd{font-family:'Cinzel',serif;font-size:15px;font-weight:900;color:#b8860b}
+.rsec{display:flex;gap:8px}.rsec input{flex:1}
+.btn{background:linear-gradient(135deg,#7d5a00,#b8860b);border:1px solid #d4a017;border-radius:7px;color:#050b18;font-family:'Cinzel',serif;font-size:12px;font-weight:700;letter-spacing:.07em;padding:10px 16px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.btn:hover{background:linear-gradient(135deg,#b8860b,#d4a017);box-shadow:0 0 16px rgba(212,160,23,.4);transform:translateY(-1px)}
+#stat{text-align:center;font-style:italic;color:#b8860b;font-size:13px;min-height:18px}
+
+/* ── Game layout ────────────────────────────────────────── */
+#gs{overflow:hidden;align-items:stretch}
+.gl{display:grid;grid-template-columns:210px 1fr 210px;width:100%;height:100vh}
+.sp{background:rgba(4,9,20,.97);border-right:1px solid rgba(180,140,50,.14);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;transition:background .35s}
+.rp{border-right:none;border-left:1px solid rgba(180,140,50,.14)}
+.ph{display:flex;align-items:center;gap:8px;padding:11px 13px;background:rgba(180,140,50,.07);border-bottom:1px solid rgba(180,140,50,.13);font-family:'Cinzel',serif;font-size:10px;letter-spacing:.13em;font-weight:700;color:#d4a017;text-transform:uppercase;flex-shrink:0}
+.tbadge{margin-left:auto;background:rgba(255,255,255,.07);border-radius:100px;padding:2px 9px;font-size:9px}
+.cm{flex:1;overflow-y:auto;padding:9px;display:flex;flex-direction:column;gap:6px;min-height:0}
+.cm::-webkit-scrollbar{width:3px}.cm::-webkit-scrollbar-thumb{background:#1e3a6e;border-radius:2px}
+.msg{display:flex;flex-direction:column;gap:2px;padding:6px 9px;border-radius:7px;animation:fu .2s ease;max-width:94%}
+@keyframes fu{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.msg.me{background:rgba(140,100,10,.82);align-self:flex-end}
+.msg.ot{background:rgba(10,20,50,.80);align-self:flex-start}
+.msg.sy{background:rgba(6,12,26,.65);align-self:center;text-align:center;border-radius:6px;padding:3px 8px}
+.ma{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.07em;font-weight:700}
+.ma.red{color:#82b1ff}.ma.blue{color:#00c853}.ma.green{color:#ce93d8}.ma.gold{color:#ffab00}.ma.system{color:#506080}
+.mt{font-size:13px;color:#e8d5a0;line-height:1.4;word-break:break-word}
+.msg.sy .mt{font-size:11px;color:#506080;font-style:italic}
+.cir{display:flex;gap:6px;padding:8px 10px;border-top:1px solid rgba(180,140,50,.25);flex-shrink:0;background:rgba(6,12,26,.65);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:background .35s}
+.cir input{flex:1;font-size:13px;padding:7px 10px}
+.sb{background:rgba(180,140,50,.12);border:1px solid #6b3d10;border-radius:6px;color:#d4a017;font-size:14px;width:32px;min-width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.sb:hover{background:rgba(180,140,50,.26);color:#ffe680}
+.pls{border-top:1px solid rgba(180,140,50,.1);padding:8px 10px;flex-shrink:0}
+.stl{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.13em;color:#506080;text-transform:uppercase;margin-bottom:5px}
+.pr{display:flex;align-items:center;gap:6px;padding:3px 6px;border-radius:5px;font-size:11px;background:rgba(255,255,255,.02);margin-bottom:2px}
+.pd{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.pnl{color:#e8d5a0;flex:1;font-size:11px}.ps{font-size:10px;color:#506080}
+.rid{font-family:'Cinzel',serif;font-size:10px;color:#506080;text-align:center;margin-top:5px}.rid span{color:#b8860b;font-weight:700}
+
+/* ── Centre column ──────────────────────────────────────── */
+.cc2{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px;padding:4px 6px;overflow-y:auto;min-height:0;background:rgba(6,10,22,.55);transition:background .35s}
+
+/* Controls */
+.ctrls{display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:center;padding:2px 0;flex-shrink:0}
+#td{font-family:'Cinzel',serif;font-size:13px;font-weight:700;letter-spacing:.14em;color:#ffe680;padding:4px 16px;background:rgba(180,140,50,.12);border:1px solid rgba(180,140,50,.3);border-radius:100px;white-space:nowrap;min-width:64px;text-align:center}
+#td.urgent{color:#e74c3c;border-color:rgba(231,76,60,.5);background:rgba(231,76,60,.1);animation:pulse-timer .6s ease-in-out infinite}
+@keyframes pulse-timer{0%,100%{opacity:1}50%{opacity:.6}}
+.rotbtn{background:rgba(180,140,50,.1);border:1px solid rgba(180,140,50,.3);border-radius:7px;color:#d4a017;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.06em;padding:4px 9px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.rotbtn:hover{background:rgba(180,140,50,.22);color:#ffe680}
+.actbtn{background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.32);border-radius:6px;color:#e74c3c;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.05em;padding:4px 9px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.actbtn:hover{background:rgba(231,76,60,.26);color:#ff8070}
+.drawbtn{background:rgba(80,160,255,.09);border:1px solid rgba(80,160,255,.32);border-radius:6px;color:#60a8ff;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.05em;padding:4px 9px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.drawbtn:hover{background:rgba(80,160,255,.22);color:#90c8ff}
+
+/* ── Team Progress Bars ─────────────────────────────────── */
+.team-prog-wrap{width:100%;max-width:520px;display:flex;flex-direction:column;gap:5px;flex-shrink:0}
+.team-bar-block{border-radius:8px;padding:7px 10px;border:1px solid;display:flex;flex-direction:column;gap:5px}
+.team-bar-block.us{background:rgba(224,80,80,.06);border-color:rgba(224,80,80,.2)}
+.team-bar-block.them{background:rgba(64,176,96,.06);border-color:rgba(64,176,96,.2)}
+.team-bar-header{display:flex;align-items:center;gap:8px}
+.team-label{font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:.1em}
+.team-bar-block.us .team-label{color:#e05050}
+.team-bar-block.them .team-label{color:#40b060}
+.team-tag{font-family:'Cinzel',serif;font-size:9px;padding:1px 7px;border-radius:100px;letter-spacing:.06em}
+.team-bar-block.us .team-tag{background:rgba(224,80,80,.15);color:#e05050;border:1px solid rgba(224,80,80,.3)}
+.team-bar-block.them .team-tag{background:rgba(64,176,96,.15);color:#40b060;border:1px solid rgba(64,176,96,.3)}
+.team-pct-big{margin-left:auto;font-family:'Cinzel',serif;font-size:12px;font-weight:700}
+.team-bar-block.us .team-pct-big{color:#e05050}
+.team-bar-block.them .team-pct-big{color:#40b060}
+.team-main-track{width:100%;height:10px;background:rgba(255,255,255,.07);border-radius:5px;overflow:hidden}
+.team-main-fill{height:100%;border-radius:5px;transition:width .6s ease}
+.team-bar-block.us .team-main-fill{background:linear-gradient(90deg,#c02020,#e05050)}
+.team-bar-block.them .team-main-fill{background:linear-gradient(90deg,#208040,#40b060)}
+.player-rows{display:flex;flex-direction:column;gap:3px}
+.player-row{display:flex;align-items:center;gap:5px;padding:2px 0}
+.prog-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;border:1px solid rgba(255,255,255,.14)}
+.prog-name{font-family:'Cinzel',serif;font-size:9px;color:#c0c8d8;min-width:40px;white-space:nowrap}
+.prog-name.elim{text-decoration:line-through;opacity:.4;color:#e74c3c}
+.prog-track-sm{flex:1;height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden;min-width:40px}
+.prog-fill-sm{height:100%;border-radius:3px;transition:width .5s ease}
+.prog-pct-sm{font-family:'Cinzel',serif;font-size:8px;color:#7080a0;min-width:26px;text-align:right}
+.hearts{display:flex;gap:1px;flex-shrink:0}
+.heart{font-size:10px;line-height:1;transition:opacity .2s}
+.heart.lost{opacity:.14;filter:grayscale(1)}
+.opp-mystery{display:flex;flex-direction:column;gap:3px}
+.opp-player{display:flex;align-items:center;gap:5px;padding:2px 0}
+.opp-name{font-family:'Cinzel',serif;font-size:9px;color:#c0c8d8;min-width:40px;white-space:nowrap}
+.opp-name.elim{text-decoration:line-through;opacity:.4;color:#e74c3c}
+
+/* ── Hex Bee Board ──────────────────────────────────────── */
+.board-outer{position:relative;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+#gc{display:block;border-radius:3px;cursor:pointer;touch-action:none}
+.sel-info{font-family:'Cinzel',serif;font-size:10px;color:#506080;min-height:14px;text-align:center;letter-spacing:.05em;flex-shrink:0}
+
+/* ── Word Input Area ────────────────────────────────────── */
+.bee-input-wrap{display:flex;gap:6px;align-items:center;width:100%;max-width:520px;padding:0 2px;flex-shrink:0}
+#bee-input{flex:1;background:rgba(8,16,40,.85);border:1px solid #1e3a6e;border-radius:8px;color:#e8d5a0;font-family:'Cinzel',serif;font-size:15px;font-weight:700;letter-spacing:.18em;padding:9px 14px;outline:none;text-transform:uppercase;transition:border-color .2s;text-align:center}
+#bee-input:focus{border-color:#b8860b;box-shadow:0 0 12px rgba(180,140,50,.25)}
+#bee-input:disabled{opacity:.35;cursor:default}
+.wbtn-sub{background:linear-gradient(135deg,#7d5a00,#b8860b);border:1px solid #d4a017;border-radius:8px;color:#050b18;font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:.08em;padding:9px 13px;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.wbtn-sub:hover{background:linear-gradient(135deg,#b8860b,#d4a017);box-shadow:0 0 14px rgba(212,160,23,.4);transform:translateY(-1px)}
+.wbtn-sub:disabled{opacity:.3;cursor:default;transform:none}
+.wbtn-clr{background:rgba(180,140,50,.1);border:1px solid rgba(180,140,50,.28);border-radius:8px;color:#d4a017;font-size:14px;width:36px;min-width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+.wbtn-clr:hover{background:rgba(180,140,50,.26);color:#ffe680}
+.wbtn-clr:disabled{opacity:.3;cursor:default}
+
+/* ── Fill (Word) log ──────────────────────────────────────── */
+.gls{border-top:1px solid rgba(180,140,50,.1);padding:6px 10px;display:flex;flex-direction:column;gap:4px;height:140px;flex-shrink:0}
+.ml{overflow-y:auto;font-size:10px;color:#7080a0;display:flex;flex-direction:column;gap:2px;font-family:'Cinzel',serif}
+.ml::-webkit-scrollbar{width:3px}.ml::-webkit-scrollbar-thumb{background:#1e3a6e;border-radius:2px}
+.le{padding:1px 0}.le.red{color:#82b1ff}.le.blue{color:#00c853}.le.green{color:#ce93d8}.le.gold{color:#ffab00}
+
+/* ── Notifications ──────────────────────────────────────── */
+#board-notif{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.85);background:rgba(6,12,26,.96);border:2px solid rgba(180,140,50,.6);border-radius:14px;padding:18px 28px;text-align:center;pointer-events:none;z-index:9999;opacity:0;transition:opacity .35s,transform .35s;min-width:240px;max-width:90vw;backdrop-filter:blur(12px)}
+#board-notif.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+#board-notif .bn-title{font-family:'Cinzel',serif;font-size:18px;font-weight:700;letter-spacing:.12em;color:#ffe680;margin-bottom:6px;text-shadow:0 0 12px rgba(255,200,0,.5)}
+#board-notif .bn-sub{font-family:'Cinzel',serif;font-size:13px;color:#c8dde8;letter-spacing:.07em;line-height:1.5}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(10,22,40,.97);border:1px solid rgba(180,140,50,.4);border-radius:8px;color:#e8d5a0;font-family:'Cinzel',serif;font-size:12px;padding:10px 18px;opacity:0;transition:all .3s;pointer-events:none;z-index:999}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.vote-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;display:flex;align-items:center;justify-content:center}
+.vote-box{background:rgba(8,14,30,.98);border:1px solid rgba(180,140,50,.3);border-radius:14px;padding:24px 32px;text-align:center;max-width:340px}
+.vote-box h3{font-family:'Cinzel',serif;font-size:14px;letter-spacing:.1em;color:#d4a017;margin-bottom:10px}
+.vote-box p{font-size:13px;color:#9090a0;margin-bottom:16px}
+.vote-btns{display:flex;gap:10px;justify-content:center}
+.rvbtn{padding:7px 20px;border-radius:6px;font-size:12px;font-family:'Cinzel',serif;cursor:pointer;border:1px solid;transition:all .15s}
+.rvbtn.yes{background:rgba(39,174,96,.18);border-color:#27ae60;color:#2ecc71}
+.rvbtn.yes:hover{background:rgba(39,174,96,.35)}
+.rvbtn.no{background:rgba(192,57,43,.18);border-color:#c0392b;color:#e74c3c}
+.rvbtn.no:hover{background:rgba(192,57,43,.35)}
+#uimode-btn{position:fixed;top:12px;right:14px;z-index:9000;width:38px;height:38px;border-radius:50%;border:1.5px solid rgba(180,140,50,.45);background:rgba(10,22,50,.75);backdrop-filter:blur(8px);color:#d4a017;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,.45);transition:background .3s,border-color .3s,transform .2s}
+#uimode-btn:hover{transform:scale(1.12)}
+
+/* ── LIGHT MODE ─────────────────────────────────────────── */
+body.light{background:#f0ebe0;background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(200,180,130,.35) 0%,transparent 60%);color:#2a1f0a}
+body.light #uimode-btn{background:rgba(255,252,240,.88);border-color:rgba(140,100,20,.45);color:#7a5a00}
+body.light .lcard{background:rgba(255,252,240,.97);border-color:rgba(140,100,20,.28);box-shadow:0 4px 40px rgba(100,70,10,.15)}
+body.light .gsub{color:#7a6a50}
+body.light input[type=text]{background:#fffdf5;border-color:#c8b070;color:#2a1f0a}
+body.light input[type=text]::placeholder{color:#a09070}
+body.light .lbl,.body.light .stl{color:#907050}
+body.light .cc:hover{background:rgba(0,0,0,.04)}
+body.light .cc span{color:#907050}
+body.light .tbox{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.09)}
+body.light .tm{color:#907050}
+body.light #stat{color:#7a5a00}
+body.light .sp{background:rgba(255,252,242,.97);border-color:rgba(140,100,20,.18)}
+body.light .ph{background:rgba(180,140,50,.08);border-color:rgba(140,100,20,.18);color:#7a5a00}
+body.light .msg.me{background:rgba(180,140,20,.18)}
+body.light .msg.ot{background:rgba(200,190,170,.35)}
+body.light .msg.sy{background:rgba(200,190,160,.25)}
+body.light .mt{color:#2a1f0a}
+body.light .msg.sy .mt{color:#907050}
+body.light .cir{background:rgba(240,234,215,.80);border-color:rgba(180,140,50,.22)}
+body.light .sb{background:rgba(180,140,50,.12);border-color:#c8a060;color:#7a5a00}
+body.light .pls{border-color:rgba(140,100,20,.14)}
+body.light .stl{color:#a09060}
+body.light .pr{background:rgba(0,0,0,.03)}
+body.light .pnl{color:#2a1f0a}
+body.light .ps{color:#907050}
+body.light .rid span{color:#7a5000}
+body.light .gls{border-color:rgba(140,100,20,.14)}
+body.light .cc2{background:rgba(240,234,216,.60)}
+body.light #td{color:#7a5000;background:rgba(180,140,50,.1);border-color:rgba(180,140,50,.35)}
+body.light .rotbtn{background:rgba(180,140,50,.1);border-color:rgba(140,100,20,.4);color:#7a5000}
+body.light .rotbtn:hover{background:rgba(180,140,50,.24);color:#3a2000}
+body.light .actbtn{background:rgba(200,50,30,.07);border-color:rgba(200,50,30,.32);color:#c03020}
+body.light .drawbtn{background:rgba(30,110,220,.07);border-color:rgba(30,110,220,.3);color:#1a6ab0}
+body.light .team-bar-block.us{background:rgba(224,80,80,.04);border-color:rgba(200,60,60,.22)}
+body.light .team-bar-block.them{background:rgba(64,176,96,.04);border-color:rgba(40,140,70,.22)}
+body.light .team-main-track,.body.light .prog-track-sm{background:rgba(0,0,0,.09)}
+body.light .prog-name,.body.light .opp-name{color:#3a2f1a}
+body.light .sel-info{color:#907050}
+body.light #bee-input{background:#fffdf5;border-color:#c8b070;color:#2a1f0a}
+body.light .wbtn-clr{background:rgba(180,140,50,.12);border-color:rgba(140,100,20,.4);color:#7a5000}
+body.light .toast{background:rgba(255,252,238,.97);border-color:rgba(140,100,20,.4);color:#2a1f0a}
+body.light #board-notif{background:rgba(255,252,236,.97)}
+body.light .vote-box{background:rgba(255,252,238,.98);border-color:rgba(140,100,20,.3)}
+body.light .vote-box p{color:#706050}
+body.light #mob-drawer{background:transparent;border-color:rgba(140,100,20,.35)}
+body.light .mob-handle{color:#3a2800;text-shadow:0 1px 4px rgba(255,240,180,.9)}
+body.light .mob-tab{color:#6a4a00;text-shadow:0 1px 3px rgba(255,240,180,.8)}
+body.light .mob-tab.active{color:#7a3000;border-bottom-color:#b8860b;text-shadow:0 0 6px rgba(180,100,0,.5)}
+
+/* ── Mobile ─────────────────────────────────────────────── */
+@media(max-width:640px){
+  html,body{overflow:hidden;height:100dvh;touch-action:manipulation}
+  #gs{overflow:hidden!important}
+  .gl{display:block!important;position:relative;width:100vw;height:100dvh}
+  .sp{display:none!important}
+  .cc2{position:absolute!important;top:0;left:0;right:0;bottom:0;padding:2px 2px!important;overflow-y:auto!important;gap:3px!important;align-items:center!important}
+  .ctrls{gap:3px!important;padding:1px 0!important}
+  #td{font-size:11px!important;padding:3px 10px!important}
+  .rotbtn,.actbtn,.drawbtn{font-size:9px!important;padding:3px 7px!important}
+  .team-prog-wrap{gap:3px!important}
+  .team-bar-block{padding:4px 7px!important;gap:3px!important}
+  .team-label{font-size:9px!important}
+  .team-pct-big{font-size:10px!important}
+  .team-main-track{height:7px!important}
+  .player-row{padding:1px 0!important}
+  .prog-name,.opp-name{font-size:8px!important;min-width:32px!important}
+  .heart{font-size:8px!important}
+  .bee-input-wrap{gap:4px!important;padding:0!important}
+  #bee-input{font-size:13px!important;padding:7px 10px!important;letter-spacing:.12em!important}
+  .wbtn-sub{font-size:10px!important;padding:7px 10px!important}
+  .wbtn-clr{width:30px!important;min-width:30px!important;height:30px!important}
+  .sel-info{font-size:9px!important;min-height:11px!important}
+  #mob-drawer{
+    position:fixed;bottom:0;left:0;right:0;
+    background:transparent;
+    backdrop-filter:none;-webkit-backdrop-filter:none;
+    border-top:1px solid rgba(180,140,50,.30);
+    border-radius:14px 14px 0 0;
+    z-index:100;max-height:65dvh;
+    display:flex;flex-direction:column;
+    transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)
+  }
+  #mob-drawer.open{transform:translateY(0)}
+  .mob-handle{
+    text-align:center;padding:7px 0 5px;
+    font-family:'Cinzel',serif;font-size:13px;font-weight:700;letter-spacing:.10em;
+    color:#e8f0f8;cursor:pointer;flex-shrink:0;line-height:1;
+    background:transparent;text-shadow:0 1px 6px rgba(0,0,0,.95)
+  }
+  .mob-tabs{display:flex;flex-shrink:0;border-bottom:1px solid rgba(180,140,50,.20);background:transparent}
+  .mob-tab{
+    flex:1;font-family:'Cinzel',serif;font-size:12px;font-weight:700;letter-spacing:.08em;
+    padding:9px 4px 7px;text-align:center;color:#d0dde8;cursor:pointer;
+    border:none;background:transparent;transition:color .15s;
+    text-shadow:0 1px 4px rgba(0,0,0,.9)
+  }
+  .mob-tab.active{color:#ffe080;border-bottom:2px solid #ffe080;background:transparent;text-shadow:0 0 8px rgba(255,200,0,.6)}
+  .mob-panel{display:none;flex:1;overflow-y:auto;flex-direction:column;min-height:0;background:transparent}
+  .mob-panel.active{display:flex}
+  #mob-openbtn{position:fixed;bottom:10px;right:10px;width:40px;height:40px;border-radius:50%;background:rgba(180,140,50,.22);border:1px solid rgba(180,140,50,.45);color:#d4a017;font-size:17px;cursor:pointer;z-index:99;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 12px rgba(0,0,0,.55)}
+}
+@media(min-width:641px){#mob-drawer{display:none!important}#mob-openbtn{display:none!important}}
+@media(max-width:640px){#mob-openbtn{display:flex}}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ── Login ──────────────────────────────────────────────── -->
+<div id="ls" class="screen active">
+  <div class="lw">
+    <div>
+      <div class="crown">🐝</div>
+      <h1 class="gtitle">STRATEGY HUB</h1>
+      <p class="gsub">Team Spelling Bee &middot; 5 Minutes &middot; One Hive</p>
+    </div>
+    <div class="lcard">
+      <input type="text" id="ni" placeholder="Your name…" maxlength="20"/>
+      <div class="lbl">Choose your colour</div>
+      <div class="ccs">
+        <div class="cc" data-color="red"   style="--c:#2979ff"><div class="csw"></div><span>Cobalt</span></div>
+        <div class="cc" data-color="blue"  style="--c:#00c853"><div class="csw"></div><span>Emerald</span></div>
+        <div class="cc" data-color="green" style="--c:#aa00ff"><div class="csw"></div><span>Violet</span></div>
+        <div class="cc" data-color="gold"  style="--c:#ffab00"><div class="csw"></div><span>Amber</span></div>
+      </div>
+      <div class="tbox">
+        <div class="tb ta"><span class="tl">⚔ TEAM A</span><span class="tm">Cobalt + Amber</span></div>
+        <div class="vsd">VS</div>
+        <div class="tb tb2"><span class="tl">⚔ TEAM B</span><span class="tm">Emerald + Violet</span></div>
+      </div>
+      <div style="font-family:'Cinzel',serif;font-size:10px;color:#507090;line-height:1.5;text-align:center;padding:2px 0">
+        🔑 Every word must include the <em>center letter</em>.<br>5 minutes to find more words than the enemy team!
+      </div>
+      <div class="rsec">
+        <input type="text" id="ri" placeholder="Room ID (blank = create new)"/>
+        <button id="jb" class="btn">Enter Hive</button>
+      </div>
+      <div id="stat">Enter your name and join!</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Game ───────────────────────────────────────────────── -->
+<div id="gs" class="screen">
+  <div class="gl">
+
+    <!-- Left: team chat -->
+    <div class="sp">
+      <div class="ph">🛡<span>TEAM CHAT</span><span id="tld" class="tbadge">—</span></div>
+      <div id="tcm" class="cm"></div>
+      <div class="cir">
+        <input type="text" id="tci" placeholder="Message ally…" maxlength="200"/>
+        <button id="tsb" class="sb">➤</button>
+      </div>
+      <div class="pls">
+        <div class="stl">Players</div>
+        <div id="pl"></div>
+        <div class="rid">Room: <span id="rs">—</span></div>
+      </div>
+    </div>
+
+    <!-- Centre: hex board + word input -->
+    <div class="cc2" id="center-col">
+      <div class="ctrls">
+        <div id="td">5:00</div>
+        <button class="rotbtn" id="shufflebtn">🔀 Shuffle</button>
+        <button class="rotbtn" id="themebtn">🎨 Theme</button>
+        <button class="actbtn" id="resbtn">⚑ Resign</button>
+        <button class="drawbtn" id="drawbtn">🤝 Draw</button>
+      </div>
+
+      <!-- Two team progress bars -->
+      <div class="team-prog-wrap" id="prog-wrap"></div>
+
+      <!-- Hex Board -->
+      <div class="board-outer">
+        <canvas id="gc" width="300" height="340"></canvas>
+        <div id="board-notif"><div class="bn-title" id="bn-title"></div><div class="bn-sub" id="bn-sub"></div></div>
+      </div>
+
+      <!-- Word input -->
+      <div class="bee-input-wrap">
+        <input type="text" id="bee-input" placeholder="Type or click letters…" maxlength="15"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+        <button class="wbtn-sub" id="sub-btn">ENTER</button>
+        <button class="wbtn-clr" id="clr-btn">✕</button>
+      </div>
+
+      <div class="sel-info" id="sel-info">Click letters or type · center letter required · min 4 letters</div>
+    </div>
+
+    <!-- Right: public chat + word log -->
+    <div class="sp rp">
+      <div class="ph">📢<span>PUBLIC CHAT</span></div>
+      <div id="pcm" class="cm"></div>
+      <div class="cir">
+        <input type="text" id="pci" placeholder="Global message…" maxlength="200"/>
+        <button id="psb" class="sb">➤</button>
+      </div>
+      <div class="gls">
+        <div class="stl">Team Words Found</div>
+        <div id="ml" class="ml"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- Mobile drawer -->
+<div id="mob-drawer" style="display:none">
+  <div class="mob-handle" id="mob-handle">▲ CHAT &amp; PLAYERS</div>
+  <div class="mob-tabs">
+    <button class="mob-tab active" data-tab="tchat">🛡 Team</button>
+    <button class="mob-tab" data-tab="pchat">📢 Public</button>
+    <button class="mob-tab" data-tab="players">👤 Players</button>
+  </div>
+  <div class="mob-panel active" id="mob-tchat">
+    <div id="mob-tcm" class="cm"></div>
+    <div class="cir">
+      <input type="text" id="mob-tci" placeholder="Message ally…" maxlength="200"/>
+      <button id="mob-tsb" class="sb">➤</button>
+    </div>
+  </div>
+  <div class="mob-panel" id="mob-pchat">
+    <div id="mob-pcm" class="cm"></div>
+    <div class="cir">
+      <input type="text" id="mob-pci" placeholder="Global message…" maxlength="200"/>
+      <button id="mob-psb" class="sb">➤</button>
+    </div>
+  </div>
+  <div class="mob-panel" id="mob-players" style="padding:8px">
+    <div id="mob-pl"></div>
+  </div>
+</div>
+<button id="mob-openbtn" style="display:none">💬</button>
+
+<!-- Draw overlay -->
+<div id="vote-overlay" class="vote-overlay" style="display:none">
+  <div class="vote-box">
+    <h3>DRAW PROPOSED</h3>
+    <p id="vote-msg">The opponent team proposes a draw. Accept?</p>
+    <div class="vote-btns">
+      <button class="rvbtn yes" id="vote-yes">✓ Accept</button>
+      <button class="rvbtn no" id="vote-no">✗ Decline</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+<button id="uimode-btn" title="Toggle Light / Dark">🌙</button>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import{getDatabase,ref,set,get,push,onValue,update,remove,onDisconnect}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const FB={
+  apiKey:"AIzaSyBapLAgSJg1hzy6mAPj7KgEg9ey7vesrtU",
+  authDomain:"board-puzzle-games.firebaseapp.com",
+  databaseURL:"https://board-puzzle-games-default-rtdb.firebaseio.com",
+  projectId:"board-puzzle-games",
+  storageBucket:"board-puzzle-games.firebasestorage.app",
+  messagingSenderId:"543242357628",
+  appId:"1:543242357628:web:b29225610d8962776bf2f9"
+};
+const app=initializeApp(FB);
+const db=getDatabase(app);
+
+// ── Constants ──────────────────────────────────────────────
+const COLORS=['red','blue','green','gold'];
+const TEAMS={red:'A',gold:'A',blue:'B',green:'B'};
+const PM={
+  red:  {label:'Cobalt', dot:'#2979ff',fillLight:'#1565c0',fillDark:'#82b1ff',prog:'#2979ff'},
+  blue: {label:'Emerald',dot:'#00c853',fillLight:'#1b7a35',fillDark:'#69f0ae',prog:'#00c853'},
+  green:{label:'Violet', dot:'#aa00ff',fillLight:'#7b1fa2',fillDark:'#ea80fc',prog:'#aa00ff'},
+  gold: {label:'Amber',  dot:'#ffab00',fillLight:'#c06000',fillDark:'#ffd740',prog:'#ffab00'},
+};
+const GAME_DURATION=5*60*1000; // 5 minutes
+
+// ── Board themes ───────────────────────────────────────────
+const THEMES=[
+  {name:'Pearl',   bg:'#f5f4f0',hexRing:'#ffffff',hexRingHov:'#dde8ff',hexCenter:'#f0c040',hexCenterHov:'#ffe680',ringText:'#14203a',centerText:'#050b18',outline:'rgba(140,130,110,.5)',dark:false},
+  {name:'Midnight',bg:'#0c1220',hexRing:'#1a2840',hexRingHov:'#243354',hexCenter:'#b8860b',hexCenterHov:'#d4a017',ringText:'#b8cce8',centerText:'#050b18',outline:'rgba(60,100,180,.5)',dark:true},
+  {name:'Parchment',bg:'#f0e6cc',hexRing:'#fdf4e4',hexRingHov:'#ece0c8',hexCenter:'#d4a017',hexCenterHov:'#e8b820',ringText:'#32200a',centerText:'#050b18',outline:'rgba(105,75,40,.4)',dark:false},
+];
+
+// ── Letter sets (curated for good word density) ────────────
+const LETTER_SETS=[
+  {c:'A',r:['P','L','T','E','R','N']},
+  {c:'E',r:['A','G','R','N','T','S']},
+  {c:'I',r:['N','G','H','T','L','S']},
+  {c:'O',r:['W','R','D','S','H','E']},
+  {c:'U',r:['B','T','R','N','S','E']},
+  {c:'T',r:['A','I','E','R','S','N']},
+  {c:'R',r:['A','I','E','N','T','S']},
+  {c:'A',r:['M','K','E','R','S','T']},
+  {c:'E',r:['L','A','V','S','T','R']},
+  {c:'O',r:['N','C','E','R','S','T']},
+  {c:'A',r:['B','L','C','K','S','E']},
+  {c:'I',r:['D','V','R','E','S','N']},
+  {c:'E',r:['P','R','A','S','T','N']},
+  {c:'A',r:['H','W','T','E','R','S']},
+  {c:'O',r:['F','L','W','E','R','S']},
+  {c:'U',r:['F','L','T','E','R','S']},
+  {c:'I',r:['M','L','T','E','R','S']},
+  {c:'A',r:['C','L','T','E','R','S']},
+  {c:'E',r:['B','R','T','A','S','N']},
+  {c:'O',r:['B','L','T','A','S','E']},
+  {c:'U',r:['M','S','T','A','E','N']},
+  {c:'A',r:['G','R','T','E','N','S']},
+  {c:'E',r:['W','R','T','A','S','N']},
+  {c:'A',r:['D','L','T','E','R','S']},
+  {c:'O',r:['P','L','T','A','S','E']},
+  {c:'I',r:['C','L','T','E','R','S']},
+  {c:'E',r:['C','R','T','A','S','N']},
+  {c:'A',r:['V','L','T','E','R','S']},
+  {c:'O',r:['G','R','T','A','S','E']},
+  {c:'U',r:['G','R','T','A','S','E']},
+];
+
+// ── Seeded RNG ─────────────────────────────────────────────
+function hashStr(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return h>>>0;}
+function mulberry32(seed){return()=>{seed|=0;seed=(seed+0x6D2B79F5)|0;let t=Math.imul(seed^seed>>>15,1|seed);t=(t+Math.imul(t^t>>>7,61|t))^t;return((t^t>>>14)>>>0)/4294967296;};}
+function shuffle(arr,rng){for(let i=arr.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+
+// ── Letter builder (seeded per room) ──────────────────────
+function buildLetters(roomId){
+  const rng=mulberry32(hashStr(roomId+'_bee2'));
+  const set=LETTER_SETS[Math.floor(rng()*LETTER_SETS.length)];
+  return{center:set.c, ring:shuffle([...set.r],rng)};
+}
+
+// ── State ──────────────────────────────────────────────────
+let _tIdx=0;
+let _letters=null;    // {center:'A', ring:['B','C','D','E','F','G']}
+let _myWords={};      // teamWords[myTeam] — my team's found words
+let _oppWordCount=0;  // opponent team word count
+let _err={};          // mistakes per color
+let _elim={};         // eliminated per color
+let _hovHex=null;     // hovered hex index (0=center, 1-6=ring)
+let _timerInterval=null;
+let _wordCache={};    // dictionary lookup cache
+let _validating=false;
+let GS=null,myColor=null,myName='',myUid=null,roomId=null,roomRef=null;
+let _myTeam=null,_oppTeam=null;
+let _lastWinner=null;
+
+// ── Hex board drawing ──────────────────────────────────────
+function getHexParams(cv){
+  const r=Math.min(cv.width,cv.height)/6.8;
+  const d=r*2;
+  const cx=cv.width/2;
+  const cy=cv.height/2;
+  return{r,d,cx,cy};
+}
+
+function hexPositions(cv){
+  const{r,d,cx,cy}=getHexParams(cv);
+  // 0 = center; 1-6 = ring (clockwise from top)
+  const pos=[{x:cx,y:cy}];
+  for(let i=0;i<6;i++){
+    const a=-Math.PI/2+i*(Math.PI/3);
+    pos.push({x:cx+d*Math.cos(a),y:cy+d*Math.sin(a)});
+  }
+  return{pos,r};
+}
+
+function drawHex(ctx,x,y,r,fill,stroke,lw,letter,textColor){
+  ctx.beginPath();
+  for(let i=0;i<6;i++){
+    const a=Math.PI/6+i*(Math.PI/3);
+    i===0?ctx.moveTo(x+r*Math.cos(a),y+r*Math.sin(a)):ctx.lineTo(x+r*Math.cos(a),y+r*Math.sin(a));
+  }
+  ctx.closePath();
+  ctx.fillStyle=fill;ctx.fill();
+  ctx.strokeStyle=stroke;ctx.lineWidth=lw;ctx.stroke();
+  if(letter){
+    ctx.fillStyle=textColor;
+    ctx.font=`700 ${Math.round(r*.52)}px 'Cinzel',serif`;
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(letter,x,y);
+  }
+}
+
+function paint(){
+  const cv=document.getElementById('gc');
+  if(!cv)return;
+  const ctx=cv.getContext('2d');
+  const T=THEMES[_tIdx];
+  ctx.fillStyle=T.bg;ctx.fillRect(0,0,cv.width,cv.height);
+  if(!_letters)return;
+
+  const{pos,r}=hexPositions(cv);
+  const lw=T.dark?1.5:2;
+
+  // Ring hexes (indices 1-6)
+  for(let i=1;i<=6;i++){
+    const p=pos[i];
+    const hov=_hovHex===i;
+    const fill=hov?T.hexRingHov:T.hexRing;
+    drawHex(ctx,p.x,p.y,r*0.96,fill,T.outline,lw,_letters.ring[i-1],T.ringText);
+  }
+
+  // Center hex (index 0) — always gold-tinted
+  const cp=pos[0];
+  const chov=_hovHex===0;
+  drawHex(ctx,cp.x,cp.y,r*0.96,chov?T.hexCenterHov:T.hexCenter,'rgba(0,0,0,.18)',2.5,_letters.center,T.centerText);
+}
+
+function getHexAt(px,py,cv){
+  const{pos,r}=hexPositions(cv);
+  for(let i=0;i<pos.length;i++){
+    if(Math.hypot(px-pos[i].x,py-pos[i].y)<r*0.94)return i;
+  }
+  return null;
+}
+
+// ── Resize canvas ──────────────────────────────────────────
+function resizeCanvas(){
+  const cv=document.getElementById('gc');
+  const col=document.getElementById('center-col');
+  if(!cv||!col)return;
+  const mob=window.innerWidth<=640;
+  let w;
+  if(mob){
+    const vw=window.innerWidth;
+    const vh=window.innerHeight;
+    const maxH=vh-260;
+    w=Math.min(vw-10,maxH*(300/340),300);
+    w=Math.max(w,200);
+  } else {
+    const colW=col.clientWidth||480;
+    const maxH=window.innerHeight-290;
+    w=Math.min(colW-20,maxH*(300/340),360);
+    w=Math.max(w,240);
+  }
+  const h=Math.round(w*340/300);
+  cv.width=w;cv.height=h;cv.style.width=w+'px';cv.style.height=h+'px';
+  paint();
+}
+
+// ── Canvas interaction ─────────────────────────────────────
+function canvasClick(e){
+  if(!GS||GS.winner||_elim[myColor]||_validating)return;
+  const cv=document.getElementById('gc');
+  const rect=cv.getBoundingClientRect();
+  const sx=cv.width/rect.width,sy=cv.height/rect.height;
+  const px=(e.clientX-rect.left)*sx,py=(e.clientY-rect.top)*sy;
+  const hex=getHexAt(px,py,cv);
+  if(hex===null)return;
+  const letter=hex===0?_letters.center:_letters.ring[hex-1];
+  addLetterToInput(letter);
+}
+
+function canvasHover(e){
+  if(!_letters)return;
+  const cv=document.getElementById('gc');
+  const rect=cv.getBoundingClientRect();
+  const sx=cv.width/rect.width,sy=cv.height/rect.height;
+  const px=(e.clientX-rect.left)*sx,py=(e.clientY-rect.top)*sy;
+  const hex=getHexAt(px,py,cv);
+  if(hex!==_hovHex){_hovHex=hex;paint();}
+}
+
+function canvasLeave(){if(_hovHex!==null){_hovHex=null;paint();}}
+
+function canvasTouch(e){
+  e.preventDefault();
+  const t=e.touches[0];
+  canvasClick({clientX:t.clientX,clientY:t.clientY});
+}
+
+// ── Word input helpers ─────────────────────────────────────
+function addLetterToInput(letter){
+  const inp=document.getElementById('bee-input');
+  if(!inp||inp.disabled)return;
+  if(inp.value.length>=15)return;
+  inp.value+=letter.toUpperCase();
+  inp.focus();
+}
+
+function setInputEnabled(on){
+  const inp=document.getElementById('bee-input');
+  const sub=document.getElementById('sub-btn');
+  const clr=document.getElementById('clr-btn');
+  if(inp)inp.disabled=!on;
+  if(sub)sub.disabled=!on;
+  if(clr)clr.disabled=!on;
+}
+
+// ── Dictionary validation ──────────────────────────────────
+async function isValidWord(word){
+  if(_wordCache[word]!==undefined)return _wordCache[word];
+  try{
+    const res=await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+    const valid=res.ok;
+    _wordCache[word]=valid;
+    return valid;
+  }catch{
+    // Network error — give benefit of the doubt
+    return true;
+  }
+}
+
+// ── Submit word ────────────────────────────────────────────
+async function submitWord(){
+  const inp=document.getElementById('bee-input');
+  if(!inp||!GS||GS.winner||_elim[myColor]||_validating)return;
+  const word=inp.value.toLowerCase().trim();
+  if(!word){inp.focus();return;}
+  inp.value='';
+
+  // ── Local checks first ──
+  if(word.length<4){
+    showToast('Too short! Min 4 letters.');
+    recordMistake('Too short! Min 4 letters.');
+    inp.focus();return;
+  }
+
+  if(!word.includes(_letters.center.toLowerCase())){
+    showToast(`Must contain "${_letters.center}"!`);
+    recordMistake(`Must contain "${_letters.center}"!`);
+    inp.focus();return;
+  }
+
+  const avail=[_letters.center,..._letters.ring].map(l=>l.toLowerCase());
+  for(const ch of word){
+    if(!/[a-z]/.test(ch)||!avail.includes(ch)){
+      showToast(`"${ch.toUpperCase()}" is not in the hive!`);
+      recordMistake(`"${ch.toUpperCase()}" not available.`);
+      inp.focus();return;
+    }
+  }
+
+  // Already found by this team?
+  const teamWords=GS.teamWords?.[_myTeam]||{};
+  if(teamWords[word]){
+    showToast(`"${word.toUpperCase()}" already found!`);
+    document.getElementById('sel-info').textContent=`Already found by your team!`;
+    inp.focus();return;
+  }
+
+  // ── Dictionary check ──
+  _validating=true;
+  setInputEnabled(false);
+  document.getElementById('sel-info').textContent='Checking dictionary…';
+
+  const valid=await isValidWord(word);
+  _validating=false;
+  setInputEnabled(!GS?.winner&&!_elim[myColor]);
+
+  if(valid){
+    const upd={};
+    upd[`beeRooms/${roomId}/teamWords/${_myTeam}/${word}`]={word,color:myColor,name:myName,ts:Date.now()};
+    update(ref(db),upd);
+    document.getElementById('sel-info').textContent=`✓ "${word.toUpperCase()}"! Great find!`;
+    showToast(`✓ ${word.toUpperCase()}!`);
+  } else {
+    recordMistake(`"${word.toUpperCase()}" — not a valid word.`);
+  }
+  inp.focus();
+}
+
+function recordMistake(reason){
+  const nm=(_err[myColor]||0)+1;
+  const upd={};
+  upd[`beeRooms/${roomId}/mistakes/${myColor}`]=nm;
+  if(nm>=3){
+    upd[`beeRooms/${roomId}/eliminated/${myColor}`]=true;
+    const pk=push(ref(db,`beeRooms/${roomId}/chat/public`)).key;
+    upd[`beeRooms/${roomId}/chat/public/${pk}`]={
+      text:`${PM[myColor].label} (${myName}) eliminated after 3 mistakes!`,
+      name:'System',color:'system',ts:Date.now()
+    };
+    document.getElementById('sel-info').textContent='Eliminated! 3 mistakes reached.';
+    setInputEnabled(false);
+  } else {
+    document.getElementById('sel-info').textContent=`✗ ${reason} — ${3-nm} mistake${3-nm===1?'':'s'} left`;
+  }
+  update(ref(db),upd);
+  showToast(nm>=3?'Eliminated! 3 mistakes.':`Wrong! ${3-nm} mistake${3-nm===1?'':'s'} left`);
+}
+
+// ── Timer ──────────────────────────────────────────────────
+function startTimer(startTime){
+  if(_timerInterval)clearInterval(_timerInterval);
+  _timerInterval=setInterval(()=>{
+    const remaining=GAME_DURATION-(Date.now()-startTime);
+    const tdEl=document.getElementById('td');
+    if(remaining<=0){
+      clearInterval(_timerInterval);_timerInterval=null;
+      if(tdEl)tdEl.textContent='0:00';
+      tdEl?.classList.remove('urgent');
+      if(!GS?.winner)checkTimeUp();
+      return;
+    }
+    const m=Math.floor(remaining/60000);
+    const s=Math.floor((remaining%60000)/1000);
+    if(tdEl){
+      tdEl.textContent=`${m}:${s.toString().padStart(2,'0')}`;
+      if(remaining<60000)tdEl.classList.add('urgent');
+      else tdEl.classList.remove('urgent');
+    }
+  },333);
+}
+
+function checkTimeUp(){
+  if(GS?.winner)return;
+  const myCount=Object.keys(GS?.teamWords?.[_myTeam]||{}).length;
+  const oppCount=Object.keys(GS?.teamWords?.[_oppTeam]||{}).length;
+  let winner;
+  if(myCount>oppCount)winner=_myTeam;
+  else if(oppCount>myCount)winner=_oppTeam;
+  else winner='draw';
+  update(roomRef,{winner});
+}
+
+// ── Team progress ──────────────────────────────────────────
+function updateProgress(){
+  const wrap=document.getElementById('prog-wrap');
+  if(!wrap)return;
+
+  const myColors=COLORS.filter(c=>TEAMS[c]===_myTeam);
+  const oppColors=COLORS.filter(c=>TEAMS[c]===_oppTeam);
+
+  const myScore={};
+  myColors.forEach(c=>myScore[c]=0);
+  Object.values(_myWords).forEach(w=>{if(myScore[w.color]!==undefined)myScore[w.color]++;});
+  const myTotal=Object.values(myScore).reduce((a,b)=>a+b,0);
+  const oppTotal=_oppWordCount||0;
+  const maxW=Math.max(myTotal,oppTotal,5);
+  const myPct=Math.round(myTotal/maxW*100);
+  const oppPct=Math.round(oppTotal/maxW*100);
+
+  const myPlayersHTML=myColors.map(c=>{
+    const pm=PM[c];const s=myScore[c]||0;const mk=_err[c]||0;const el=_elim[c];
+    const frac=myTotal>0?Math.round(s/myTotal*100):0;
+    const hearts=[0,1,2].map(i=>`<span class="heart${i<mk?' lost':''}">♥</span>`).join('');
+    return`<div class="player-row">
+      <div class="prog-dot" style="background:${pm.dot}"></div>
+      <span class="prog-name${el?' elim':''}">${pm.label}</span>
+      <div class="prog-track-sm"><div class="prog-fill-sm" style="width:${frac}%;background:${pm.prog}"></div></div>
+      <span class="prog-pct-sm">${s}w</span>
+      <div class="hearts">${hearts}</div>
+    </div>`;
+  }).join('');
+
+  const oppPlayersHTML=oppColors.map(c=>{
+    const pm=PM[c];const mk=_err[c]||0;const el=_elim[c];
+    const hearts=[0,1,2].map(i=>`<span class="heart${i<mk?' lost':''}">♥</span>`).join('');
+    return`<div class="opp-player">
+      <div class="prog-dot" style="background:${pm.dot}"></div>
+      <span class="opp-name${el?' elim':''}">${pm.label}</span>
+      <div style="flex:1"></div>
+      <div class="hearts">${hearts}</div>
+    </div>`;
+  }).join('');
+
+  wrap.innerHTML=`
+    <div class="team-bar-block us">
+      <div class="team-bar-header">
+        <span class="team-label">⚔ OUR TEAM</span>
+        <span class="team-tag">Team ${_myTeam}</span>
+        <span class="team-pct-big">${myTotal} word${myTotal===1?'':'s'}</span>
+      </div>
+      <div class="team-main-track"><div class="team-main-fill" style="width:${myPct}%"></div></div>
+      <div class="player-rows">${myPlayersHTML}</div>
+    </div>
+    <div class="team-bar-block them">
+      <div class="team-bar-header">
+        <span class="team-label">🔒 ENEMY TEAM</span>
+        <span class="team-tag">Team ${_oppTeam}</span>
+        <span class="team-pct-big" style="color:#40b060">${oppTotal} word${oppTotal===1?'':'s'}</span>
+      </div>
+      <div class="team-main-track"><div class="team-main-fill" style="width:${oppPct}%;background:linear-gradient(90deg,#208040,#40b060)"></div></div>
+      <div class="opp-mystery">${oppPlayersHTML}</div>
+    </div>`;
+}
+
+// ── Snapshot handler ───────────────────────────────────────
+function applySnap(snap){
+  const d=snap.val();if(!d)return;
+  GS=d;
+  _myWords=d.teamWords?.[_myTeam]||{};
+  _oppWordCount=Object.keys(d.teamWords?.[_oppTeam]||{}).length;
+  _err=d.mistakes||{};
+  _elim=d.eliminated||{};
+
+  updateProgress();
+  renderPlayers(d.players||{});
+  renderWordLog(_myWords);
+  handleDrawUI(d.drawVotes||{});
+
+  // Start timer if not started
+  if(d.startTime&&!_timerInterval&&!d.winner)startTimer(d.startTime);
+
+  if(d.winner){
+    if(_timerInterval){clearInterval(_timerInterval);_timerInterval=null;}
+    const myCount=Object.keys(d.teamWords?.[_myTeam]||{}).length;
+    const oppCount=Object.keys(d.teamWords?.[_oppTeam]||{}).length;
+    const wt=d.winner==='draw'?'🤝 Draw!':d.winner===_myTeam?'🏆 Your Team Wins!':'💀 Enemy Team Wins!';
+    document.getElementById('td').textContent=wt;
+    document.getElementById('td').classList.remove('urgent');
+    setInputEnabled(false);
+    if(d.winner!==_lastWinner){
+      _lastWinner=d.winner;
+      const title=d.winner==='draw'?'DRAW!':d.winner===_myTeam?'YOUR TEAM WINS!':'ENEMY TEAM WINS!';
+      const sub=d.winner==='draw'?`Both teams tied — ${myCount} words each.`:
+        d.winner===_myTeam?`You found ${myCount} words vs their ${oppCount}!`:`They found ${oppCount} words vs your ${myCount}.`;
+      showNotif(title,sub,6000);
+    }
+  } else {
+    const aliveA=COLORS.filter(c=>TEAMS[c]==='A'&&!_elim[c]).length;
+    const aliveB=COLORS.filter(c=>TEAMS[c]==='B'&&!_elim[c]).length;
+    if(aliveA===0){update(roomRef,{winner:'B'});return;}
+    if(aliveB===0){update(roomRef,{winner:'A'});return;}
+    if(_elim[myColor]){
+      setInputEnabled(false);
+      document.getElementById('sel-info').textContent='Eliminated — spectating…';
+    } else if(!_validating){
+      setInputEnabled(true);
+    }
+    // Check if time already elapsed (e.g. reconnecting after time up)
+    if(d.startTime&&Date.now()-d.startTime>=GAME_DURATION)checkTimeUp();
+  }
+}
+
+// ── Canvas click / hover ───────────────────────────────────
+// ── Players list ───────────────────────────────────────────
+function renderPlayers(players){
+  const html=COLORS.map(c=>{
+    const pm=PM[c];
+    const p=Object.values(players).find(x=>x.color===c);
+    const mk=_err[c]||0,el=_elim[c];
+    const team=TEAMS[c];
+    const badge=`<span style="font-size:9px;padding:1px 5px;border-radius:3px;background:${team==='A'?'rgba(224,80,80,.15)':'rgba(64,176,96,.15)'};color:${team==='A'?'#e05050':'#40b060'}">${team}</span>`;
+    const status=el?'<span style="color:#e74c3c;font-size:9px">ELIM</span>':
+      mk?`<span style="color:#e74c3c;font-size:9px">${'✕'.repeat(mk)}</span>`:'';
+    return`<div class="pr">
+      <div class="pd" style="background:${pm.dot}"></div>
+      <span class="pnl">${p?esc(p.name):pm.label}</span>
+      ${badge}${status}
+    </div>`;
+  }).join('');
+  ['pl','mob-pl'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=html;});
+}
+
+// ── Word log ───────────────────────────────────────────────
+function renderWordLog(words){
+  const ml=document.getElementById('ml');if(!ml)return;
+  const sorted=Object.values(words).sort((a,b)=>b.ts-a.ts).slice(0,40);
+  ml.innerHTML=sorted.map(w=>
+    `<div class="le ${w.color}">${PM[w.color]?.label||'?'}: ${w.word.toUpperCase()}</div>`
+  ).join('');
+}
+
+// ── Chat ───────────────────────────────────────────────────
+function sendTeam(t){if(!t.trim()||!roomId)return;push(ref(db,`beeRooms/${roomId}/chat/team${_myTeam}`),{text:t.trim(),name:myName,color:myColor,ts:Date.now()});}
+function sendPublic(t){if(!t.trim()||!roomId)return;push(ref(db,`beeRooms/${roomId}/chat/public`),{text:t.trim(),name:myName,color:myColor,ts:Date.now()});}
+function addMsg(c,m,mine){const d=document.createElement('div');d.className=`msg ${mine?'me':'ot'}`;const ac=m.color==='system'?'system':m.color;d.innerHTML=`<span class="ma ${ac}">${esc(m.name)}</span><span class="mt">${esc(m.text)}</span>`;c.appendChild(d);c.scrollTop=c.scrollHeight;}
+function syncChat(r2,ids){onValue(r2,snap=>{const msgs=snap.val()||{};ids.forEach(id=>{const el=document.getElementById(id);if(!el)return;el.innerHTML='';Object.values(msgs).sort((a,b)=>a.ts-b.ts).forEach(m=>addMsg(el,m,m.name===myName));});});}
+
+// ── Draw vote ──────────────────────────────────────────────
+function handleDrawUI(votes){
+  const ov=document.getElementById('vote-overlay');
+  const anyYes=Object.values(votes).some(v=>v===true);
+  if(!anyYes){ov.style.display='none';return;}
+  if(votes[myColor]===true||votes[myColor]===false){ov.style.display='none';}
+  else{ov.style.display='flex';}
+  if(COLORS.some(c=>votes[c]===false)){
+    const cl={};COLORS.forEach(c=>{cl[`beeRooms/${roomId}/drawVotes/${c}`]=null;});
+    update(ref(db),cl);ov.style.display='none';showToast('Draw declined.');return;
+  }
+  const active=COLORS.filter(c=>!_elim[c]);
+  if(active.length>0&&active.every(c=>votes[c]===true)){update(roomRef,{winner:'draw'});ov.style.display='none';}
+}
+
+// ── Resign ─────────────────────────────────────────────────
+function resign(){
+  if(!roomId||GS?.winner)return;
+  if(!confirm(`Resign as ${PM[myColor]?.label}? Your teammate can still play.`))return;
+  const upd={};
+  upd[`beeRooms/${roomId}/eliminated/${myColor}`]=true;
+  upd[`beeRooms/${roomId}/mistakes/${myColor}`]=3;
+  const pk=push(ref(db,`beeRooms/${roomId}/chat/public`)).key;
+  upd[`beeRooms/${roomId}/chat/public/${pk}`]={text:`${PM[myColor].label} (${myName}) resigned.`,name:'System',color:'system',ts:Date.now()};
+  update(ref(db),upd);
+  setInputEnabled(false);
+}
+
+// ── Helpers ────────────────────────────────────────────────
+function showNotif(title,sub,dur=2800){
+  const n=document.getElementById('board-notif');
+  document.getElementById('bn-title').textContent=title;
+  document.getElementById('bn-sub').textContent=sub;
+  n.classList.add('show');
+  setTimeout(()=>n.classList.remove('show'),dur);
+}
+function showToast(msg,dur=2400){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),dur);
+}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ── Start game ─────────────────────────────────────────────
+function startGame(rid){
+  roomId=rid;roomRef=ref(db,`beeRooms/${roomId}`);
+  _letters=buildLetters(roomId);
+
+  document.getElementById('ls').classList.remove('active');
+  document.getElementById('gs').classList.add('active');
+  document.getElementById('rs').textContent=roomId;
+  document.getElementById('tld').textContent='Team '+_myTeam;
+  resizeCanvas();window.addEventListener('resize',resizeCanvas);
+  paint();
+
+  onValue(roomRef,applySnap);
+  syncChat(ref(db,`beeRooms/${roomId}/chat/team${_myTeam}`),['tcm','mob-tcm']);
+  syncChat(ref(db,`beeRooms/${roomId}/chat/public`),['pcm','mob-pcm']);
+
+  const cv=document.getElementById('gc');
+  cv.addEventListener('click',canvasClick);
+  cv.addEventListener('mousemove',canvasHover);
+  cv.addEventListener('mouseleave',canvasLeave);
+  cv.addEventListener('touchstart',canvasTouch,{passive:false});
+
+  // Word input wiring
+  const inp=document.getElementById('bee-input');
+  inp.addEventListener('input',e=>{
+    if(!_letters)return;
+    const avail=[_letters.center,..._letters.ring].map(l=>l.toLowerCase());
+    let v='';
+    for(const ch of e.target.value.toUpperCase()){
+      if(/[A-Z]/.test(ch)&&avail.includes(ch.toLowerCase()))v+=ch;
+    }
+    e.target.value=v;
+  });
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();submitWord();}});
+  document.getElementById('sub-btn').addEventListener('click',submitWord);
+  document.getElementById('clr-btn').addEventListener('click',()=>{inp.value='';inp.focus();});
+
+  // Controls
+  document.getElementById('shufflebtn').addEventListener('click',()=>{
+    if(!_letters)return;
+    _letters={..._letters,ring:shuffle([..._letters.ring],()=>Math.random())};
+    paint();showToast('Ring shuffled!');
+  });
+  document.getElementById('themebtn').addEventListener('click',()=>{
+    _tIdx=(_tIdx+1)%THEMES.length;paint();showToast('Theme: '+THEMES[_tIdx].name);
+  });
+  document.getElementById('resbtn').addEventListener('click',resign);
+  document.getElementById('drawbtn').addEventListener('click',()=>{
+    if(GS?.winner||_elim[myColor])return;
+    update(ref(db,`beeRooms/${roomId}/drawVotes`),{[myColor]:true});
+    showToast('Draw proposed…');
+  });
+  document.getElementById('vote-yes').addEventListener('click',()=>{
+    update(ref(db,`beeRooms/${roomId}/drawVotes`),{[myColor]:true});
+    document.getElementById('vote-overlay').style.display='none';
+  });
+  document.getElementById('vote-no').addEventListener('click',()=>{
+    update(ref(db,`beeRooms/${roomId}/drawVotes`),{[myColor]:false});
+    document.getElementById('vote-overlay').style.display='none';
+  });
+
+  // Team chat wiring
+  const st=()=>{const i=document.getElementById('tci');sendTeam(i.value);i.value='';};
+  document.getElementById('tsb').addEventListener('click',st);
+  document.getElementById('tci').addEventListener('keydown',e=>{if(e.key==='Enter')st();});
+  const stm=()=>{const i=document.getElementById('mob-tci');sendTeam(i.value);i.value='';};
+  document.getElementById('mob-tsb').addEventListener('click',stm);
+  document.getElementById('mob-tci').addEventListener('keydown',e=>{if(e.key==='Enter')stm();});
+
+  // Public chat wiring
+  const sp2=()=>{const i=document.getElementById('pci');sendPublic(i.value);i.value='';};
+  document.getElementById('psb').addEventListener('click',sp2);
+  document.getElementById('pci').addEventListener('keydown',e=>{if(e.key==='Enter')sp2();});
+  const spm=()=>{const i=document.getElementById('mob-pci');sendPublic(i.value);i.value='';};
+  document.getElementById('mob-psb').addEventListener('click',spm);
+  document.getElementById('mob-pci').addEventListener('keydown',e=>{if(e.key==='Enter')spm();});
+
+  // Mobile drawer
+  const drawer=document.getElementById('mob-drawer');
+  const openbtn=document.getElementById('mob-openbtn');
+  if(window.innerWidth<=640)drawer.style.display='flex';
+  openbtn.addEventListener('click',()=>drawer.classList.toggle('open'));
+  document.getElementById('mob-handle').addEventListener('click',()=>drawer.classList.toggle('open'));
+  document.querySelectorAll('.mob-tab').forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      document.querySelectorAll('.mob-tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.mob-panel').forEach(p=>p.classList.remove('active'));
+      tab.classList.add('active');document.getElementById('mob-'+tab.dataset.tab).classList.add('active');
+    });
+  });
+
+  push(ref(db,`beeRooms/${roomId}/chat/public`),{text:`${PM[myColor].label} (${myName}) joined — Team ${_myTeam}!`,name:'System',color:'system',ts:Date.now()});
+  setInputEnabled(true);
+  inp.focus();
+}
+
+// ── Join / create room ─────────────────────────────────────
+async function joinRoom(){
+  const name=document.getElementById('ni').value.trim();
+  const rid=document.getElementById('ri').value.trim().toUpperCase();
+  if(!name){document.getElementById('stat').textContent='Enter your name!';return;}
+  if(!myColor){document.getElementById('stat').textContent='Choose a colour!';return;}
+  myName=name;myUid='u'+Date.now()+Math.random().toString(36).slice(2,6);
+  _myTeam=TEAMS[myColor];_oppTeam=_myTeam==='A'?'B':'A';
+  document.getElementById('stat').textContent='Connecting…';
+  try{
+    let fid=rid;
+    if(!rid){
+      fid='B'+Math.random().toString(36).slice(2,7).toUpperCase();
+      await set(ref(db,`beeRooms/${fid}`),{
+        created:Date.now(),
+        startTime:Date.now(),
+        players:{},
+        teamWords:{A:{},B:{}},
+        mistakes:{red:0,blue:0,green:0,gold:0},
+        eliminated:{red:false,blue:false,green:false,gold:false},
+        winner:null,
+        drawVotes:{}
+      });
+    } else {
+      const chk=await get(ref(db,`beeRooms/${fid}`));
+      if(!chk.exists()){document.getElementById('stat').textContent='Room not found!';return;}
+    }
+    const ps=await get(ref(db,`beeRooms/${fid}/players`));
+    const taken=Object.values(ps.val()||{}).some(p=>p.color===myColor);
+    if(taken){document.getElementById('stat').textContent='Colour taken! Choose another.';return;}
+    await set(ref(db,`beeRooms/${fid}/players/${myUid}`),{name,color:myColor,online:true});
+    onDisconnect(ref(db,`beeRooms/${fid}/players/${myUid}/online`)).set(false);
+    startGame(fid);
+  }catch(err){document.getElementById('stat').textContent='Error: '+err.message;}
+}
+
+// ── Init ───────────────────────────────────────────────────
+document.querySelectorAll('.cc').forEach(el=>{
+  el.addEventListener('click',()=>{
+    document.querySelectorAll('.cc').forEach(c=>c.classList.remove('sel'));
+    el.classList.add('sel');
+    myColor=el.dataset.color;
+    _myTeam=TEAMS[myColor];_oppTeam=_myTeam==='A'?'B':'A';
+  });
+});
+document.getElementById('jb').addEventListener('click',joinRoom);
+document.getElementById('ni').addEventListener('keydown',e=>{if(e.key==='Enter')joinRoom();});
+document.getElementById('ri').addEventListener('keydown',e=>{if(e.key==='Enter')joinRoom();});
+
+// Initial paint (no letters yet — just blank canvas)
+paint();
+
+// ── Light/Dark toggle ──────────────────────────────────────
+(function(){
+  const btn=document.getElementById('uimode-btn');
+  let light=false;
+  try{if(localStorage.getItem('sh_ui2')==='light'){light=true;document.body.classList.add('light');btn.textContent='☀️';btn.title='Switch to Dark';}}catch(e){}
+  btn.addEventListener('click',()=>{
+    light=!light;document.body.classList.toggle('light',light);
+    btn.textContent=light?'☀️':'🌙';btn.title=light?'Switch to Dark':'Switch to Light';
+    try{localStorage.setItem('sh_ui2',light?'light':'dark');}catch(e){}
+    paint();
+  });
+})();
+</script>
+</body>
+</html>
