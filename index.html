@@ -113,13 +113,9 @@ input[type=text]:focus{border-color:#b8860b;box-shadow:0 0 10px rgba(180,140,50,
 .prog-track-sm{flex:1;height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden;min-width:40px}
 .prog-fill-sm{height:100%;border-radius:3px;transition:width .5s ease}
 .prog-pct-sm{font-family:'Cinzel',serif;font-size:8px;color:#7080a0;min-width:26px;text-align:right}
-.hearts{display:flex;gap:1px;flex-shrink:0}
-.heart{font-size:10px;line-height:1;transition:opacity .2s}
-.heart.lost{opacity:.14;filter:grayscale(1)}
 .opp-mystery{display:flex;flex-direction:column;gap:3px}
 .opp-player{display:flex;align-items:center;gap:5px;padding:2px 0}
 .opp-name{font-family:'Cinzel',serif;font-size:9px;color:#c0c8d8;min-width:40px;white-space:nowrap}
-.opp-name.elim{text-decoration:line-through;opacity:.4;color:#e74c3c}
 
 /* ── Hex Bee Board ──────────────────────────────────────── */
 .board-outer{position:relative;flex-shrink:0;display:flex;align-items:center;justify-content:center}
@@ -138,7 +134,18 @@ input[type=text]:focus{border-color:#b8860b;box-shadow:0 0 10px rgba(180,140,50,
 .wbtn-clr:hover{background:rgba(180,140,50,.26);color:#ffe680}
 .wbtn-clr:disabled{opacity:.3;cursor:default}
 
-/* ── Fill (Word) log ──────────────────────────────────────── */
+/* ── Word pills ──────────────────────────────────────────── */
+.word-pill{font-family:'Cinzel',serif;font-size:9px;font-weight:700;letter-spacing:.06em;padding:2px 7px;border-radius:100px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:#c0c8d8;white-space:nowrap}
+.word-pill.red{background:rgba(41,121,255,.15);border-color:rgba(41,121,255,.35);color:#82b1ff}
+.word-pill.blue{background:rgba(0,200,83,.12);border-color:rgba(0,200,83,.3);color:#69f0ae}
+.word-pill.green{background:rgba(170,0,255,.12);border-color:rgba(170,0,255,.3);color:#ea80fc}
+.word-pill.gold{background:rgba(255,171,0,.12);border-color:rgba(255,171,0,.3);color:#ffd740}
+body.light .word-pill{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.12);color:#3a2f1a}
+body.light .word-pill.red{background:rgba(41,121,255,.1);border-color:rgba(41,121,255,.3);color:#1565c0}
+body.light .word-pill.blue{background:rgba(0,150,60,.1);border-color:rgba(0,150,60,.3);color:#1b7a35}
+body.light .word-pill.green{background:rgba(120,0,180,.1);border-color:rgba(120,0,180,.3);color:#7b1fa2}
+body.light .word-pill.gold{background:rgba(180,100,0,.1);border-color:rgba(180,100,0,.3);color:#c06000}
+
 .gls{border-top:1px solid rgba(180,140,50,.1);padding:6px 10px;display:flex;flex-direction:column;gap:4px;height:140px;flex-shrink:0}
 .ml{overflow-y:auto;font-size:10px;color:#7080a0;display:flex;flex-direction:column;gap:2px;font-family:'Cinzel',serif}
 .ml::-webkit-scrollbar{width:3px}.ml::-webkit-scrollbar-thumb{background:#1e3a6e;border-radius:2px}
@@ -297,7 +304,7 @@ body.light .mob-tab.active{color:#7a3000;border-bottom-color:#b8860b;text-shadow
         <div class="tb tb2"><span class="tl">⚔ TEAM B</span><span class="tm">Emerald + Violet</span></div>
       </div>
       <div style="font-family:'Cinzel',serif;font-size:10px;color:#507090;line-height:1.5;text-align:center;padding:2px 0">
-        🔑 Every word must include the <em>center letter</em>.<br>5 minutes to find more words than the enemy team!
+        🔑 Every word must include the <em>center letter</em>.<br>5 minutes · min 3 letters · most words wins!
       </div>
       <div class="rsec">
         <input type="text" id="ri" placeholder="Room ID (blank = create new)"/>
@@ -320,7 +327,11 @@ body.light .mob-tab.active{color:#7a3000;border-bottom-color:#b8860b;text-shadow
         <input type="text" id="tci" placeholder="Message ally…" maxlength="200"/>
         <button id="tsb" class="sb">➤</button>
       </div>
-      <div class="pls">
+      <div class="pls" id="my-words-wrap" style="flex:1;overflow-y:auto;min-height:0;display:flex;flex-direction:column">
+        <div class="stl" style="display:flex;align-items:center;gap:6px">Our Words <span id="my-words-count" style="background:rgba(180,140,50,.18);border-radius:100px;padding:1px 7px;color:#d4a017;font-size:9px">0</span></div>
+        <div id="my-words-list" style="overflow-y:auto;flex:1;display:flex;flex-wrap:wrap;gap:3px;align-content:flex-start;padding-top:4px"></div>
+      </div>
+      <div class="pls" style="flex-shrink:0">
         <div class="stl">Players</div>
         <div id="pl"></div>
         <div class="rid">Room: <span id="rs">—</span></div>
@@ -342,7 +353,7 @@ body.light .mob-tab.active{color:#7a3000;border-bottom-color:#b8860b;text-shadow
 
       <!-- Hex Board -->
       <div class="board-outer">
-        <canvas id="gc" width="300" height="340"></canvas>
+        <canvas id="gc" width="320" height="360"></canvas>
         <div id="board-notif"><div class="bn-title" id="bn-title"></div><div class="bn-sub" id="bn-sub"></div></div>
       </div>
 
@@ -354,7 +365,7 @@ body.light .mob-tab.active{color:#7a3000;border-bottom-color:#b8860b;text-shadow
         <button class="wbtn-clr" id="clr-btn">✕</button>
       </div>
 
-      <div class="sel-info" id="sel-info">Click letters or type · center letter required · min 4 letters</div>
+      <div class="sel-info" id="sel-info">Click letters or type · center letter required · min 3 letters</div>
     </div>
 
     <!-- Right: public chat + word log -->
@@ -381,6 +392,7 @@ body.light .mob-tab.active{color:#7a3000;border-bottom-color:#b8860b;text-shadow
   <div class="mob-tabs">
     <button class="mob-tab active" data-tab="tchat">🛡 Team</button>
     <button class="mob-tab" data-tab="pchat">📢 Public</button>
+    <button class="mob-tab" data-tab="words">📝 Words</button>
     <button class="mob-tab" data-tab="players">👤 Players</button>
   </div>
   <div class="mob-panel active" id="mob-tchat">
@@ -396,6 +408,10 @@ body.light .mob-tab.active{color:#7a3000;border-bottom-color:#b8860b;text-shadow
       <input type="text" id="mob-pci" placeholder="Global message…" maxlength="200"/>
       <button id="mob-psb" class="sb">➤</button>
     </div>
+  </div>
+  <div class="mob-panel" id="mob-words" style="padding:8px;flex-wrap:wrap;gap:4px;align-content:flex-start">
+    <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:.13em;color:#506080;text-transform:uppercase;width:100%;margin-bottom:4px">Our Team's Words</div>
+    <div id="mob-words-list" style="display:flex;flex-wrap:wrap;gap:4px;width:100%"></div>
   </div>
   <div class="mob-panel" id="mob-players" style="padding:8px">
     <div id="mob-pl"></div>
@@ -453,38 +469,43 @@ const THEMES=[
   {name:'Parchment',bg:'#f0e6cc',hexRing:'#fdf4e4',hexRingHov:'#ece0c8',hexCenter:'#d4a017',hexCenterHov:'#e8b820',ringText:'#32200a',centerText:'#050b18',outline:'rgba(105,75,40,.4)',dark:false},
 ];
 
-// ── Letter sets (curated for good word density) ────────────
+// ── Letter sets (curated for good word density — 7 ring letters) ────────────
 const LETTER_SETS=[
-  {c:'A',r:['P','L','T','E','R','N']},
-  {c:'E',r:['A','G','R','N','T','S']},
-  {c:'I',r:['N','G','H','T','L','S']},
-  {c:'O',r:['W','R','D','S','H','E']},
-  {c:'U',r:['B','T','R','N','S','E']},
-  {c:'T',r:['A','I','E','R','S','N']},
-  {c:'R',r:['A','I','E','N','T','S']},
-  {c:'A',r:['M','K','E','R','S','T']},
-  {c:'E',r:['L','A','V','S','T','R']},
-  {c:'O',r:['N','C','E','R','S','T']},
-  {c:'A',r:['B','L','C','K','S','E']},
-  {c:'I',r:['D','V','R','E','S','N']},
-  {c:'E',r:['P','R','A','S','T','N']},
-  {c:'A',r:['H','W','T','E','R','S']},
-  {c:'O',r:['F','L','W','E','R','S']},
-  {c:'U',r:['F','L','T','E','R','S']},
-  {c:'I',r:['M','L','T','E','R','S']},
-  {c:'A',r:['C','L','T','E','R','S']},
-  {c:'E',r:['B','R','T','A','S','N']},
-  {c:'O',r:['B','L','T','A','S','E']},
-  {c:'U',r:['M','S','T','A','E','N']},
-  {c:'A',r:['G','R','T','E','N','S']},
-  {c:'E',r:['W','R','T','A','S','N']},
-  {c:'A',r:['D','L','T','E','R','S']},
-  {c:'O',r:['P','L','T','A','S','E']},
-  {c:'I',r:['C','L','T','E','R','S']},
-  {c:'E',r:['C','R','T','A','S','N']},
-  {c:'A',r:['V','L','T','E','R','S']},
-  {c:'O',r:['G','R','T','A','S','E']},
-  {c:'U',r:['G','R','T','A','S','E']},
+  {c:'A',r:['P','L','T','E','R','N','S']},
+  {c:'E',r:['A','G','R','N','T','S','L']},
+  {c:'I',r:['N','G','H','T','L','S','E']},
+  {c:'O',r:['W','R','D','S','H','E','N']},
+  {c:'U',r:['B','T','R','N','S','E','L']},
+  {c:'T',r:['A','I','E','R','S','N','G']},
+  {c:'R',r:['A','I','E','N','T','S','G']},
+  {c:'A',r:['M','K','E','R','S','T','N']},
+  {c:'E',r:['L','A','V','S','T','R','N']},
+  {c:'O',r:['N','C','E','R','S','T','L']},
+  {c:'A',r:['B','L','C','K','S','E','T']},
+  {c:'I',r:['D','V','R','E','S','N','G']},
+  {c:'E',r:['P','R','A','S','T','N','D']},
+  {c:'A',r:['H','W','T','E','R','S','N']},
+  {c:'O',r:['F','L','W','E','R','S','T']},
+  {c:'U',r:['F','L','T','E','R','S','N']},
+  {c:'I',r:['M','L','T','E','R','S','N']},
+  {c:'A',r:['C','L','T','E','R','S','N']},
+  {c:'E',r:['B','R','T','A','S','N','D']},
+  {c:'O',r:['B','L','T','A','S','E','N']},
+  {c:'U',r:['M','S','T','A','E','N','R']},
+  {c:'A',r:['G','R','T','E','N','S','D']},
+  {c:'E',r:['W','R','T','A','S','N','D']},
+  {c:'A',r:['D','L','T','E','R','S','N']},
+  {c:'O',r:['P','L','T','A','S','E','N']},
+  {c:'I',r:['C','L','T','E','R','S','N']},
+  {c:'E',r:['C','R','T','A','S','N','L']},
+  {c:'A',r:['V','L','T','E','R','S','N']},
+  {c:'O',r:['G','R','T','A','S','E','N']},
+  {c:'U',r:['G','R','T','A','S','E','N']},
+  {c:'E',r:['S','T','R','A','N','G','L']},
+  {c:'A',r:['R','T','I','C','L','E','S']},
+  {c:'I',r:['N','T','R','O','D','U','C']},
+  {c:'O',r:['U','T','S','P','R','E','A']},
+  {c:'U',r:['N','D','E','R','S','T','A']},
 ];
 
 // ── Seeded RNG ─────────────────────────────────────────────
@@ -501,12 +522,10 @@ function buildLetters(roomId){
 
 // ── State ──────────────────────────────────────────────────
 let _tIdx=0;
-let _letters=null;    // {center:'A', ring:['B','C','D','E','F','G']}
+let _letters=null;    // {center:'A', ring:['B','C','D','E','F','G','H']}
 let _myWords={};      // teamWords[myTeam] — my team's found words
 let _oppWordCount=0;  // opponent team word count
-let _err={};          // mistakes per color
-let _elim={};         // eliminated per color
-let _hovHex=null;     // hovered hex index (0=center, 1-6=ring)
+let _hovHex=null;     // hovered hex index (0=center, 1-7=ring)
 let _timerInterval=null;
 let _wordCache={};    // dictionary lookup cache
 let _validating=false;
@@ -516,8 +535,10 @@ let _lastWinner=null;
 
 // ── Hex board drawing ──────────────────────────────────────
 function getHexParams(cv){
-  const r=Math.min(cv.width,cv.height)/6.8;
-  const d=r*2;
+  // For 7 hexes in the ring we need a larger orbit distance
+  // r = hex radius, d = orbit distance from center to ring hex centers
+  const r=Math.min(cv.width,cv.height)/8.2;
+  const d=r*2.05;
   const cx=cv.width/2;
   const cy=cv.height/2;
   return{r,d,cx,cy};
@@ -525,10 +546,10 @@ function getHexParams(cv){
 
 function hexPositions(cv){
   const{r,d,cx,cy}=getHexParams(cv);
-  // 0 = center; 1-6 = ring (clockwise from top)
+  // 0 = center; 1-7 = ring (clockwise from top), 7 letters in ring
   const pos=[{x:cx,y:cy}];
-  for(let i=0;i<6;i++){
-    const a=-Math.PI/2+i*(Math.PI/3);
+  for(let i=0;i<7;i++){
+    const a=-Math.PI/2+i*(2*Math.PI/7);
     pos.push({x:cx+d*Math.cos(a),y:cy+d*Math.sin(a)});
   }
   return{pos,r};
@@ -562,8 +583,8 @@ function paint(){
   const{pos,r}=hexPositions(cv);
   const lw=T.dark?1.5:2;
 
-  // Ring hexes (indices 1-6)
-  for(let i=1;i<=6;i++){
+  // Ring hexes (indices 1-7)
+  for(let i=1;i<=7;i++){
     const p=pos[i];
     const hov=_hovHex===i;
     const fill=hov?T.hexRingHov:T.hexRing;
@@ -603,7 +624,7 @@ function resizeCanvas(){
     w=Math.min(colW-20,maxH*(300/340),360);
     w=Math.max(w,240);
   }
-  const h=Math.round(w*340/300);
+  const h=Math.round(w*360/320);
   cv.width=w;cv.height=h;cv.style.width=w+'px';cv.style.height=h+'px';
   paint();
 }
@@ -680,15 +701,15 @@ async function submitWord(){
   inp.value='';
 
   // ── Local checks first ──
-  if(word.length<4){
-    showToast('Too short! Min 4 letters.');
-    recordMistake('Too short! Min 4 letters.');
+  if(word.length<3){
+    showToast('Too short! Min 3 letters.');
+    document.getElementById('sel-info').textContent='Too short! Minimum 3 letters.';
     inp.focus();return;
   }
 
   if(!word.includes(_letters.center.toLowerCase())){
     showToast(`Must contain "${_letters.center}"!`);
-    recordMistake(`Must contain "${_letters.center}"!`);
+    document.getElementById('sel-info').textContent=`Must contain center letter "${_letters.center}"!`;
     inp.focus();return;
   }
 
@@ -696,7 +717,7 @@ async function submitWord(){
   for(const ch of word){
     if(!/[a-z]/.test(ch)||!avail.includes(ch)){
       showToast(`"${ch.toUpperCase()}" is not in the hive!`);
-      recordMistake(`"${ch.toUpperCase()}" not available.`);
+      document.getElementById('sel-info').textContent=`"${ch.toUpperCase()}" is not available.`;
       inp.focus();return;
     }
   }
@@ -716,7 +737,7 @@ async function submitWord(){
 
   const valid=await isValidWord(word);
   _validating=false;
-  setInputEnabled(!GS?.winner&&!_elim[myColor]);
+  setInputEnabled(!GS?.winner);
 
   if(valid){
     const upd={};
@@ -725,29 +746,10 @@ async function submitWord(){
     document.getElementById('sel-info').textContent=`✓ "${word.toUpperCase()}"! Great find!`;
     showToast(`✓ ${word.toUpperCase()}!`);
   } else {
-    recordMistake(`"${word.toUpperCase()}" — not a valid word.`);
+    showToast(`"${word.toUpperCase()}" — not a valid word.`);
+    document.getElementById('sel-info').textContent=`"${word.toUpperCase()}" is not a valid word. Try again!`;
   }
   inp.focus();
-}
-
-function recordMistake(reason){
-  const nm=(_err[myColor]||0)+1;
-  const upd={};
-  upd[`beeRooms/${roomId}/mistakes/${myColor}`]=nm;
-  if(nm>=3){
-    upd[`beeRooms/${roomId}/eliminated/${myColor}`]=true;
-    const pk=push(ref(db,`beeRooms/${roomId}/chat/public`)).key;
-    upd[`beeRooms/${roomId}/chat/public/${pk}`]={
-      text:`${PM[myColor].label} (${myName}) eliminated after 3 mistakes!`,
-      name:'System',color:'system',ts:Date.now()
-    };
-    document.getElementById('sel-info').textContent='Eliminated! 3 mistakes reached.';
-    setInputEnabled(false);
-  } else {
-    document.getElementById('sel-info').textContent=`✗ ${reason} — ${3-nm} mistake${3-nm===1?'':'s'} left`;
-  }
-  update(ref(db),upd);
-  showToast(nm>=3?'Eliminated! 3 mistakes.':`Wrong! ${3-nm} mistake${3-nm===1?'':'s'} left`);
 }
 
 // ── Timer ──────────────────────────────────────────────────
@@ -802,26 +804,22 @@ function updateProgress(){
   const oppPct=Math.round(oppTotal/maxW*100);
 
   const myPlayersHTML=myColors.map(c=>{
-    const pm=PM[c];const s=myScore[c]||0;const mk=_err[c]||0;const el=_elim[c];
+    const pm=PM[c];const s=myScore[c]||0;
     const frac=myTotal>0?Math.round(s/myTotal*100):0;
-    const hearts=[0,1,2].map(i=>`<span class="heart${i<mk?' lost':''}">♥</span>`).join('');
     return`<div class="player-row">
       <div class="prog-dot" style="background:${pm.dot}"></div>
-      <span class="prog-name${el?' elim':''}">${pm.label}</span>
+      <span class="prog-name">${pm.label}</span>
       <div class="prog-track-sm"><div class="prog-fill-sm" style="width:${frac}%;background:${pm.prog}"></div></div>
       <span class="prog-pct-sm">${s}w</span>
-      <div class="hearts">${hearts}</div>
     </div>`;
   }).join('');
 
   const oppPlayersHTML=oppColors.map(c=>{
-    const pm=PM[c];const mk=_err[c]||0;const el=_elim[c];
-    const hearts=[0,1,2].map(i=>`<span class="heart${i<mk?' lost':''}">♥</span>`).join('');
+    const pm=PM[c];
     return`<div class="opp-player">
       <div class="prog-dot" style="background:${pm.dot}"></div>
-      <span class="opp-name${el?' elim':''}">${pm.label}</span>
+      <span class="opp-name">${pm.label}</span>
       <div style="flex:1"></div>
-      <div class="hearts">${hearts}</div>
     </div>`;
   }).join('');
 
@@ -852,15 +850,12 @@ function applySnap(snap){
   GS=d;
   _myWords=d.teamWords?.[_myTeam]||{};
   _oppWordCount=Object.keys(d.teamWords?.[_oppTeam]||{}).length;
-  _err=d.mistakes||{};
-  _elim=d.eliminated||{};
 
   updateProgress();
   renderPlayers(d.players||{});
   renderWordLog(_myWords);
   handleDrawUI(d.drawVotes||{});
 
-  // Start timer if not started
   if(d.startTime&&!_timerInterval&&!d.winner)startTimer(d.startTime);
 
   if(d.winner){
@@ -879,17 +874,7 @@ function applySnap(snap){
       showNotif(title,sub,6000);
     }
   } else {
-    const aliveA=COLORS.filter(c=>TEAMS[c]==='A'&&!_elim[c]).length;
-    const aliveB=COLORS.filter(c=>TEAMS[c]==='B'&&!_elim[c]).length;
-    if(aliveA===0){update(roomRef,{winner:'B'});return;}
-    if(aliveB===0){update(roomRef,{winner:'A'});return;}
-    if(_elim[myColor]){
-      setInputEnabled(false);
-      document.getElementById('sel-info').textContent='Eliminated — spectating…';
-    } else if(!_validating){
-      setInputEnabled(true);
-    }
-    // Check if time already elapsed (e.g. reconnecting after time up)
+    if(!_validating)setInputEnabled(true);
     if(d.startTime&&Date.now()-d.startTime>=GAME_DURATION)checkTimeUp();
   }
 }
@@ -900,15 +885,12 @@ function renderPlayers(players){
   const html=COLORS.map(c=>{
     const pm=PM[c];
     const p=Object.values(players).find(x=>x.color===c);
-    const mk=_err[c]||0,el=_elim[c];
     const team=TEAMS[c];
     const badge=`<span style="font-size:9px;padding:1px 5px;border-radius:3px;background:${team==='A'?'rgba(224,80,80,.15)':'rgba(64,176,96,.15)'};color:${team==='A'?'#e05050':'#40b060'}">${team}</span>`;
-    const status=el?'<span style="color:#e74c3c;font-size:9px">ELIM</span>':
-      mk?`<span style="color:#e74c3c;font-size:9px">${'✕'.repeat(mk)}</span>`:'';
     return`<div class="pr">
       <div class="pd" style="background:${pm.dot}"></div>
       <span class="pnl">${p?esc(p.name):pm.label}</span>
-      ${badge}${status}
+      ${badge}
     </div>`;
   }).join('');
   ['pl','mob-pl'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=html;});
@@ -916,11 +898,24 @@ function renderPlayers(players){
 
 // ── Word log ───────────────────────────────────────────────
 function renderWordLog(words){
-  const ml=document.getElementById('ml');if(!ml)return;
-  const sorted=Object.values(words).sort((a,b)=>b.ts-a.ts).slice(0,40);
-  ml.innerHTML=sorted.map(w=>
+  const ml=document.getElementById('ml');
+  const wl=document.getElementById('my-words-list');
+  const mwl=document.getElementById('mob-words-list');
+  const countEl=document.getElementById('my-words-count');
+  const sorted=Object.values(words).sort((a,b)=>b.ts-a.ts);
+  // Right panel: recent list (newest first)
+  if(ml)ml.innerHTML=sorted.slice(0,60).map(w=>
     `<div class="le ${w.color}">${PM[w.color]?.label||'?'}: ${w.word.toUpperCase()}</div>`
   ).join('');
+  // Left sidebar: word pills (alphabetical)
+  const alpha=[...sorted].sort((a,b)=>a.word.localeCompare(b.word));
+  const pillHTML=alpha.map(w=>
+    `<span class="word-pill ${w.color}" title="${PM[w.color]?.label||'?'}">${w.word.toUpperCase()}</span>`
+  ).join('');
+  const empty='<span style="font-family:Cinzel,serif;font-size:9px;color:#3a4a60;font-style:italic">No words yet…</span>';
+  if(wl)wl.innerHTML=pillHTML||empty;
+  if(mwl)mwl.innerHTML=pillHTML||empty;
+  if(countEl)countEl.textContent=sorted.length;
 }
 
 // ── Chat ───────────────────────────────────────────────────
@@ -940,8 +935,7 @@ function handleDrawUI(votes){
     const cl={};COLORS.forEach(c=>{cl[`beeRooms/${roomId}/drawVotes/${c}`]=null;});
     update(ref(db),cl);ov.style.display='none';showToast('Draw declined.');return;
   }
-  const active=COLORS.filter(c=>!_elim[c]);
-  if(active.length>0&&active.every(c=>votes[c]===true)){update(roomRef,{winner:'draw'});ov.style.display='none';}
+  if(COLORS.length>0&&COLORS.every(c=>votes[c]===true)){update(roomRef,{winner:'draw'});ov.style.display='none';}
 }
 
 // ── Resign ─────────────────────────────────────────────────
@@ -949,8 +943,6 @@ function resign(){
   if(!roomId||GS?.winner)return;
   if(!confirm(`Resign as ${PM[myColor]?.label}? Your teammate can still play.`))return;
   const upd={};
-  upd[`beeRooms/${roomId}/eliminated/${myColor}`]=true;
-  upd[`beeRooms/${roomId}/mistakes/${myColor}`]=3;
   const pk=push(ref(db,`beeRooms/${roomId}/chat/public`)).key;
   upd[`beeRooms/${roomId}/chat/public/${pk}`]={text:`${PM[myColor].label} (${myName}) resigned.`,name:'System',color:'system',ts:Date.now()};
   update(ref(db),upd);
@@ -1086,8 +1078,6 @@ async function joinRoom(){
         startTime:Date.now(),
         players:{},
         teamWords:{A:{},B:{}},
-        mistakes:{red:0,blue:0,green:0,gold:0},
-        eliminated:{red:false,blue:false,green:false,gold:false},
         winner:null,
         drawVotes:{}
       });
