@@ -45,13 +45,13 @@ input[type=text]:focus{border-color:#b8860b;box-shadow:0 0 10px rgba(180,140,50,
 /* ── Game layout ────────────────────────────────────────── */
 #gs{overflow:hidden;align-items:stretch}
 /* 3 columns: game 56% | chat+words 24% | ad 20% */
-.gl{display:grid;grid-template-columns:56fr 24fr 20fr;width:100%;height:100vh;overflow:hidden}
+.gl{display:grid;grid-template-columns:56fr 24fr 20fr;width:100%;height:100vh;overflow:hidden;align-items:stretch}
 
 /* ── Game column ── */
-.game-col{display:flex;flex-direction:column;overflow:hidden;background:rgba(6,10,22,.55);padding:8px 6px 6px;gap:6px}
+.game-col{display:flex;flex-direction:column;overflow:visible;background:rgba(6,10,22,.55);padding:8px 6px 6px;gap:6px;height:100vh}
 
 /* Profile header row */
-.profile-row{display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:8px;padding:0 4px}
+.profile-row{display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:6px;padding:2px 4px}
 .profile-slot{display:flex;align-items:center;gap:6px}
 .profile-slot.right{flex-direction:row-reverse}
 /* Each individual player card in profile row */
@@ -66,11 +66,11 @@ input[type=text]:focus{border-color:#b8860b;box-shadow:0 0 10px rgba(180,140,50,
 .profile-center{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1}
 
 /* Board + vertical bars */
-.board-and-bars{display:flex;align-items:stretch;justify-content:center;gap:10px;flex:1;min-height:0;padding:0 4px}
+.board-and-bars{display:flex;align-items:stretch;justify-content:center;gap:10px;flex:1;min-height:0;padding:0 4px;overflow:visible}
 
 /* Vertical progress bar */
 /* Vertical bar group (one group per team side) */
-.vbar-group{display:flex;flex-direction:row;align-items:stretch;gap:6px;flex-shrink:0;padding:4px 0}
+.vbar-group{display:flex;flex-direction:row;align-items:stretch;gap:6px;flex-shrink:0;padding:4px 2px;min-width:0}
 .vbar-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;width:28px}
 /* Tiny profile ring on top of each bar */
 .vbar-pic{width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.2);background:rgba(20,30,60,.6);display:flex;align-items:center;justify-content:center;font-size:11px;overflow:hidden;flex-shrink:0}
@@ -80,7 +80,7 @@ input[type=text]:focus{border-color:#b8860b;box-shadow:0 0 10px rgba(180,140,50,
 .vbar-count{font-family:'Cinzel',serif;font-size:11px;font-weight:900;min-height:14px;text-align:center}
 .vbar-count.my{color:#22c55e}
 .vbar-count.opp{color:#ef4444}
-.vbar-track{flex:1;width:12px;background:rgba(255,255,255,.07);border-radius:6px;overflow:hidden;position:relative;min-height:60px}
+.vbar-track{flex:1;width:12px;background:rgba(255,255,255,.07);border-radius:6px;overflow:hidden;position:relative;min-height:80px;max-height:260px}
 .vbar-fill{position:absolute;bottom:0;left:0;right:0;border-radius:6px;transition:height .6s cubic-bezier(.4,0,.2,1)}
 .vbar-fill.my{background:linear-gradient(to top,#15803d,#22c55e)}
 .vbar-fill.opp{background:linear-gradient(to top,#b91c1c,#ef4444)}
@@ -113,14 +113,14 @@ input[type=text]:focus{border-color:#b8860b;box-shadow:0 0 10px rgba(180,140,50,
 .sel-info{font-family:'Cinzel',serif;font-size:10px;color:#506080;min-height:13px;text-align:center;letter-spacing:.05em;flex-shrink:0}
 
 /* ── Chat + Words column ── */
-.chat-col{display:flex;flex-direction:column;overflow:hidden;border-left:1px solid rgba(180,140,50,.14);background:rgba(4,9,20,.97)}
+.chat-col{display:flex;flex-direction:column;overflow:hidden;border-left:1px solid rgba(180,140,50,.14);background:rgba(4,9,20,.97);height:100vh}
 .ph{display:flex;align-items:center;gap:7px;padding:10px 11px;background:rgba(180,140,50,.07);border-bottom:1px solid rgba(180,140,50,.13);font-family:'Cinzel',serif;font-size:10px;letter-spacing:.13em;font-weight:700;color:#d4a017;text-transform:uppercase;flex-shrink:0}
 .tbadge{margin-left:auto;background:rgba(255,255,255,.07);border-radius:100px;padding:2px 9px;font-size:9px}
 /* Chat tabs */
 .chat-tabs{display:flex;flex-shrink:0;border-bottom:1px solid rgba(180,140,50,.14)}
 .chat-tab{flex:1;font-family:'Cinzel',serif;font-size:9px;font-weight:700;letter-spacing:.08em;padding:7px 4px;text-align:center;color:#506080;cursor:pointer;border:none;border-bottom:2px solid transparent;background:transparent;transition:color .15s,border-color .15s}
 .chat-tab.active{color:#d4a017;border-bottom-color:#b8860b}
-.chat-panel{display:none;flex:1;flex-direction:column;min-height:0}
+.chat-panel{display:none;flex:1;flex-direction:column;min-height:0;overflow:hidden}
 .chat-panel.active{display:flex}
 /* Chat messages - ONLY scrollable element in chat col */
 .cm{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:5px;min-height:0}
@@ -139,7 +139,7 @@ input[type=text]:focus{border-color:#b8860b;box-shadow:0 0 10px rgba(180,140,50,
 .sb{background:rgba(180,140,50,.12);border:1px solid #6b3d10;border-radius:6px;color:#d4a017;font-size:13px;width:30px;min-width:30px;height:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
 .sb:hover{background:rgba(180,140,50,.26);color:#ffe680}
 /* Words found section — no scroll, just wrap */
-.words-section{border-top:1px solid rgba(180,140,50,.14);padding:8px;flex-shrink:0;max-height:40%;overflow-y:auto}
+.words-section{border-top:1px solid rgba(180,140,50,.14);padding:8px;flex:1;min-height:0;overflow-y:auto}
 .words-section::-webkit-scrollbar{width:3px}.words-section::-webkit-scrollbar-thumb{background:#1e3a6e;border-radius:2px}
 .stl{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.13em;color:#506080;text-transform:uppercase;margin-bottom:5px;display:flex;align-items:center;gap:6px}
 .pr{display:flex;align-items:center;gap:6px;padding:3px 5px;border-radius:5px;font-size:10px;background:rgba(255,255,255,.02);margin-bottom:2px}
@@ -284,7 +284,7 @@ body.light #td{color:#7a5000}
   .gl{display:block!important;position:relative;width:100vw;height:100dvh}
   .chat-col{display:none!important}
   .ad-col{display:none!important}
-  .game-col{position:absolute!important;top:0;left:0;right:0;bottom:0;overflow:hidden!important;padding:4px!important;gap:4px!important}
+  .game-col{position:absolute!important;top:0;left:0;right:0;bottom:0;overflow:hidden!important;padding:4px!important;gap:4px!important;display:flex!important;flex-direction:column!important}
   /* Profile row compact */
   .profile-row{padding:0!important;gap:4px!important}
   .profile-pic{width:26px!important;height:26px!important;font-size:11px!important}
@@ -487,7 +487,7 @@ body.light #td{color:#7a5000}
       </div>
 
       <!-- Words found — takes remaining space, no players section -->
-      <div class="words-section" style="flex:1;max-height:none;overflow-y:auto">
+      <div class="words-section">
         <div class="stl">Our Words <span id="my-words-count" style="background:rgba(180,140,50,.18);border-radius:100px;padding:1px 6px;color:#d4a017;font-size:9px">0</span></div>
         <div id="my-words-list" style="display:flex;flex-wrap:wrap;gap:3px;padding-top:4px"></div>
       </div>
@@ -1070,6 +1070,8 @@ function applySnap(snap){
     }
   } else {
     if(!_validating)setInputEnabled(true);
+    // Re-render word buf in case it was cleared
+    renderWordBuf();
     if(d.startTime&&Date.now()-d.startTime>=GAME_DURATION)checkTimeUp();
   }
 }
@@ -1288,7 +1290,7 @@ function startGame(rid){
 
   push(ref(db,`beeRooms/${roomId}/chat/public`),{text:`${PM[myColor].label} (${myName}) joined — Team ${_myTeam}!`,name:'System',color:'system',ts:Date.now()});
   setInputEnabled(true);
-
+  renderWordBuf();
 }
 
 // ── Join / create room ─────────────────────────────────────
