@@ -44,41 +44,53 @@ input[type=text]:focus{border-color:#b8860b;box-shadow:0 0 10px rgba(180,140,50,
 
 /* ── Game layout ────────────────────────────────────────── */
 #gs{overflow:hidden;align-items:stretch}
-.gl{display:grid;grid-template-columns:210px 1fr 210px;width:100%;height:100vh}
-.sp{background:rgba(4,9,20,.97);border-right:1px solid rgba(180,140,50,.14);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;transition:background .35s}
-.rp{border-right:none;border-left:1px solid rgba(180,140,50,.14)}
-.ph{display:flex;align-items:center;gap:8px;padding:11px 13px;background:rgba(180,140,50,.07);border-bottom:1px solid rgba(180,140,50,.13);font-family:'Cinzel',serif;font-size:10px;letter-spacing:.13em;font-weight:700;color:#d4a017;text-transform:uppercase;flex-shrink:0}
-.tbadge{margin-left:auto;background:rgba(255,255,255,.07);border-radius:100px;padding:2px 9px;font-size:9px}
-.cm{flex:1;overflow-y:auto;padding:9px;display:flex;flex-direction:column;gap:6px;min-height:0}
-.cm::-webkit-scrollbar{width:3px}.cm::-webkit-scrollbar-thumb{background:#1e3a6e;border-radius:2px}
-.msg{display:flex;flex-direction:column;gap:2px;padding:6px 9px;border-radius:7px;animation:fu .2s ease;max-width:94%}
-@keyframes fu{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-.msg.me{background:rgba(140,100,10,.82);align-self:flex-end}
-.msg.ot{background:rgba(10,20,50,.80);align-self:flex-start}
-.msg.sy{background:rgba(6,12,26,.65);align-self:center;text-align:center;border-radius:6px;padding:3px 8px}
-.ma{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.07em;font-weight:700}
-.ma.red{color:#82b1ff}.ma.blue{color:#00c853}.ma.green{color:#ce93d8}.ma.gold{color:#ffab00}.ma.system{color:#506080}
-.mt{font-size:13px;color:#e8d5a0;line-height:1.4;word-break:break-word}
-.msg.sy .mt{font-size:11px;color:#506080;font-style:italic}
-.cir{display:flex;gap:6px;padding:8px 10px;border-top:1px solid rgba(180,140,50,.25);flex-shrink:0;background:rgba(6,12,26,.65);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:background .35s}
-.cir input{flex:1;font-size:13px;padding:7px 10px}
-.sb{background:rgba(180,140,50,.12);border:1px solid #6b3d10;border-radius:6px;color:#d4a017;font-size:14px;width:32px;min-width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
-.sb:hover{background:rgba(180,140,50,.26);color:#ffe680}
-.pls{border-top:1px solid rgba(180,140,50,.1);padding:8px 10px;flex-shrink:0}
-.stl{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.13em;color:#506080;text-transform:uppercase;margin-bottom:5px}
-.pr{display:flex;align-items:center;gap:6px;padding:3px 6px;border-radius:5px;font-size:11px;background:rgba(255,255,255,.02);margin-bottom:2px}
-.pd{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.pnl{color:#e8d5a0;flex:1;font-size:11px}.ps{font-size:10px;color:#506080}
-.rid{font-family:'Cinzel',serif;font-size:10px;color:#506080;text-align:center;margin-top:5px}.rid span{color:#b8860b;font-weight:700}
+/* 3 columns: game 56% | chat+words 24% | ad 20% */
+.gl{display:grid;grid-template-columns:56fr 24fr 20fr;width:100%;height:100vh;overflow:hidden}
 
-/* ── Centre column ──────────────────────────────────────── */
-.cc2{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px;padding:4px 6px;overflow-y:auto;min-height:0;background:rgba(6,10,22,.55);transition:background .35s}
+/* ── Game column ── */
+.game-col{display:flex;flex-direction:column;overflow:hidden;background:rgba(6,10,22,.55);padding:8px 6px 6px;gap:6px}
 
-/* Controls */
-.ctrls{display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:center;padding:2px 0;flex-shrink:0}
-#td{font-family:'Cinzel',serif;font-size:13px;font-weight:700;letter-spacing:.14em;color:#ffe680;padding:4px 16px;background:rgba(180,140,50,.12);border:1px solid rgba(180,140,50,.3);border-radius:100px;white-space:nowrap;min-width:64px;text-align:center}
-#td.urgent{color:#e74c3c;border-color:rgba(231,76,60,.5);background:rgba(231,76,60,.1);animation:pulse-timer .6s ease-in-out infinite}
-@keyframes pulse-timer{0%,100%{opacity:1}50%{opacity:.6}}
+/* Profile header row */
+.profile-row{display:flex;align-items:center;justify-content:space-between;flex-shrink:0;gap:8px;padding:0 4px}
+.profile-slot{display:flex;align-items:center;gap:8px}
+.profile-slot.right{flex-direction:row-reverse}
+.profile-pic{width:40px;height:40px;border-radius:50%;border:2px solid rgba(180,140,50,.35);background:rgba(20,30,60,.6);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#506080;font-size:18px;overflow:hidden}
+.profile-pic img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.profile-info{display:flex;flex-direction:column;gap:2px}
+.profile-info.right{align-items:flex-end}
+.profile-name{font-family:'Cinzel',serif;font-size:11px;font-weight:700;color:#d4a017;letter-spacing:.06em;white-space:nowrap;max-width:100px;overflow:hidden;text-overflow:ellipsis}
+.profile-team{font-family:'Cinzel',serif;font-size:9px;padding:1px 6px;border-radius:100px;letter-spacing:.05em}
+.profile-team.ta{background:rgba(224,80,80,.15);color:#e05050;border:1px solid rgba(224,80,80,.3)}
+.profile-team.tb{background:rgba(64,176,96,.15);color:#40b060;border:1px solid rgba(64,176,96,.3)}
+.profile-center{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1}
+
+/* Board + vertical bars */
+.board-and-bars{display:flex;align-items:stretch;justify-content:center;gap:10px;flex:1;min-height:0;padding:0 4px}
+
+/* Vertical progress bar */
+.vbar-wrap{display:flex;flex-direction:column;align-items:center;gap:5px;width:44px;flex-shrink:0;padding:4px 0}
+.vbar-label{font-family:'Cinzel',serif;font-size:8px;font-weight:700;letter-spacing:.08em;text-align:center;line-height:1.3;white-space:nowrap}
+.vbar-label.ta{color:#e05050}
+.vbar-label.tb{color:#40b060}
+.vbar-count{font-family:'Cinzel',serif;font-size:14px;font-weight:900;min-height:18px;text-align:center}
+.vbar-count.ta{color:#e05050}
+.vbar-count.tb{color:#40b060}
+.vbar-track{flex:1;width:14px;background:rgba(255,255,255,.07);border-radius:7px;overflow:hidden;position:relative;min-height:60px}
+.vbar-fill{position:absolute;bottom:0;left:0;right:0;border-radius:7px;transition:height .6s cubic-bezier(.4,0,.2,1)}
+.vbar-fill.ta{background:linear-gradient(to top,#c02020,#e05050)}
+.vbar-fill.tb{background:linear-gradient(to top,#208040,#40b060)}
+/* Per-player segments inside vbar */
+.vbar-seg{position:absolute;left:0;right:0;transition:height .5s ease,bottom .5s ease}
+
+/* Board canvas area */
+.board-outer{position:relative;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+#gc{display:block;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+
+/* Bottom of game col */
+.game-bottom{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;padding:0 4px 4px}
+
+/* Controls row */
+.ctrls{display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:center;flex-shrink:0}
 .rotbtn{background:rgba(180,140,50,.1);border:1px solid rgba(180,140,50,.3);border-radius:7px;color:#d4a017;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.06em;padding:4px 9px;cursor:pointer;transition:all .15s;white-space:nowrap}
 .rotbtn:hover{background:rgba(180,140,50,.22);color:#ffe680}
 .actbtn{background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.32);border-radius:6px;color:#e74c3c;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.05em;padding:4px 9px;cursor:pointer;transition:all .15s;white-space:nowrap}
@@ -86,47 +98,70 @@ input[type=text]:focus{border-color:#b8860b;box-shadow:0 0 10px rgba(180,140,50,
 .drawbtn{background:rgba(80,160,255,.09);border:1px solid rgba(80,160,255,.32);border-radius:6px;color:#60a8ff;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.05em;padding:4px 9px;cursor:pointer;transition:all .15s;white-space:nowrap}
 .drawbtn:hover{background:rgba(80,160,255,.22);color:#90c8ff}
 
-/* ── Team Progress Bars ─────────────────────────────────── */
-.team-prog-wrap{width:100%;max-width:520px;display:flex;flex-direction:column;gap:5px;flex-shrink:0}
-.team-bar-block{border-radius:8px;padding:7px 10px;border:1px solid;display:flex;flex-direction:column;gap:5px}
-.team-bar-block.us{background:rgba(224,80,80,.06);border-color:rgba(224,80,80,.2)}
-.team-bar-block.them{background:rgba(64,176,96,.06);border-color:rgba(64,176,96,.2)}
-.team-bar-header{display:flex;align-items:center;gap:8px}
-.team-label{font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:.1em}
-.team-bar-block.us .team-label{color:#e05050}
-.team-bar-block.them .team-label{color:#40b060}
-.team-tag{font-family:'Cinzel',serif;font-size:9px;padding:1px 7px;border-radius:100px;letter-spacing:.06em}
-.team-bar-block.us .team-tag{background:rgba(224,80,80,.15);color:#e05050;border:1px solid rgba(224,80,80,.3)}
-.team-bar-block.them .team-tag{background:rgba(64,176,96,.15);color:#40b060;border:1px solid rgba(64,176,96,.3)}
-.team-pct-big{margin-left:auto;font-family:'Cinzel',serif;font-size:12px;font-weight:700}
-.team-bar-block.us .team-pct-big{color:#e05050}
-.team-bar-block.them .team-pct-big{color:#40b060}
-.team-main-track{width:100%;height:10px;background:rgba(255,255,255,.07);border-radius:5px;overflow:hidden}
-.team-main-fill{height:100%;border-radius:5px;transition:width .6s ease}
-.team-bar-block.us .team-main-fill{background:linear-gradient(90deg,#c02020,#e05050)}
-.team-bar-block.them .team-main-fill{background:linear-gradient(90deg,#208040,#40b060)}
-.player-rows{display:flex;flex-direction:column;gap:3px}
-.player-row{display:flex;align-items:center;gap:5px;padding:2px 0}
-.prog-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;border:1px solid rgba(255,255,255,.14)}
-.prog-name{font-family:'Cinzel',serif;font-size:9px;color:#c0c8d8;min-width:40px;white-space:nowrap}
-.prog-name.elim{text-decoration:line-through;opacity:.4;color:#e74c3c}
-.prog-track-sm{flex:1;height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden;min-width:40px}
-.prog-fill-sm{height:100%;border-radius:3px;transition:width .5s ease}
-.prog-pct-sm{font-family:'Cinzel',serif;font-size:8px;color:#7080a0;min-width:26px;text-align:right}
-.opp-mystery{display:flex;flex-direction:column;gap:3px}
-.opp-player{display:flex;align-items:center;gap:5px;padding:2px 0}
-.opp-name{font-family:'Cinzel',serif;font-size:9px;color:#c0c8d8;min-width:40px;white-space:nowrap}
+/* Timer */
+#td{font-family:'Cinzel',serif;font-size:22px;font-weight:900;letter-spacing:.18em;color:#ffe680;text-align:center;text-shadow:0 0 20px rgba(255,200,0,.3)}
+#td.urgent{color:#e74c3c;text-shadow:0 0 16px rgba(231,76,60,.5);animation:pulse-timer .6s ease-in-out infinite}
+@keyframes pulse-timer{0%,100%{opacity:1}50%{opacity:.55}}
+
+/* Sel info */
+.sel-info{font-family:'Cinzel',serif;font-size:10px;color:#506080;min-height:13px;text-align:center;letter-spacing:.05em;flex-shrink:0}
+
+/* ── Chat + Words column ── */
+.chat-col{display:flex;flex-direction:column;overflow:hidden;border-left:1px solid rgba(180,140,50,.14);background:rgba(4,9,20,.97)}
+.ph{display:flex;align-items:center;gap:7px;padding:10px 11px;background:rgba(180,140,50,.07);border-bottom:1px solid rgba(180,140,50,.13);font-family:'Cinzel',serif;font-size:10px;letter-spacing:.13em;font-weight:700;color:#d4a017;text-transform:uppercase;flex-shrink:0}
+.tbadge{margin-left:auto;background:rgba(255,255,255,.07);border-radius:100px;padding:2px 9px;font-size:9px}
+/* Chat tabs */
+.chat-tabs{display:flex;flex-shrink:0;border-bottom:1px solid rgba(180,140,50,.14)}
+.chat-tab{flex:1;font-family:'Cinzel',serif;font-size:9px;font-weight:700;letter-spacing:.08em;padding:7px 4px;text-align:center;color:#506080;cursor:pointer;border:none;border-bottom:2px solid transparent;background:transparent;transition:color .15s,border-color .15s}
+.chat-tab.active{color:#d4a017;border-bottom-color:#b8860b}
+.chat-panel{display:none;flex:1;flex-direction:column;min-height:0}
+.chat-panel.active{display:flex}
+/* Chat messages - ONLY scrollable element in chat col */
+.cm{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:5px;min-height:0}
+.cm::-webkit-scrollbar{width:3px}.cm::-webkit-scrollbar-thumb{background:#1e3a6e;border-radius:2px}
+.msg{display:flex;flex-direction:column;gap:2px;padding:5px 8px;border-radius:7px;animation:fu .2s ease;max-width:96%}
+@keyframes fu{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.msg.me{background:rgba(120,85,5,.92);align-self:flex-end}
+.msg.ot{background:rgba(8,16,44,.92);align-self:flex-start}
+.msg.sy{background:rgba(6,12,26,.80);align-self:center;text-align:center;border-radius:5px;padding:2px 7px}
+.ma{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.07em;font-weight:700}
+.ma.red{color:#82b1ff}.ma.blue{color:#00c853}.ma.green{color:#ce93d8}.ma.gold{color:#ffab00}.ma.system{color:#506080}
+.mt{font-size:12px;color:#e8d5a0;line-height:1.4;word-break:break-word}
+.msg.sy .mt{font-size:10px;color:#506080;font-style:italic}
+.cir{display:flex;gap:5px;padding:7px 8px;border-top:1px solid rgba(180,140,50,.2);flex-shrink:0;background:rgba(4,8,20,.82)}
+.cir input{flex:1;font-size:12px;padding:6px 9px}
+.sb{background:rgba(180,140,50,.12);border:1px solid #6b3d10;border-radius:6px;color:#d4a017;font-size:13px;width:30px;min-width:30px;height:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.sb:hover{background:rgba(180,140,50,.26);color:#ffe680}
+/* Words found section — no scroll, just wrap */
+.words-section{border-top:1px solid rgba(180,140,50,.14);padding:8px;flex-shrink:0;max-height:40%;overflow-y:auto}
+.words-section::-webkit-scrollbar{width:3px}.words-section::-webkit-scrollbar-thumb{background:#1e3a6e;border-radius:2px}
+.stl{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.13em;color:#506080;text-transform:uppercase;margin-bottom:5px;display:flex;align-items:center;gap:6px}
+.pr{display:flex;align-items:center;gap:6px;padding:3px 5px;border-radius:5px;font-size:10px;background:rgba(255,255,255,.02);margin-bottom:2px}
+.pd{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.pnl{color:#e8d5a0;flex:1;font-size:10px}
+.rid{font-family:'Cinzel',serif;font-size:9px;color:#506080;text-align:center;margin-top:5px;padding-top:5px;border-top:1px solid rgba(180,140,50,.08)}.rid span{color:#b8860b;font-weight:700}
+
+/* ── Ad column ── */
+.ad-col{display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;border-left:1px solid rgba(180,140,50,.1);background:rgba(4,8,18,.8);padding:12px 8px;gap:10px}
+.ad-placeholder{width:100%;flex:1;max-height:600px;border:1px dashed rgba(180,140,50,.2);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:rgba(180,140,50,.03);color:#2a3a50}
+.ad-placeholder span{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#2a3a50}
+.ad-placeholder .ad-icon{font-size:28px;opacity:.3}
+
+/* team progress replaced by vertical bars — see .vbar-* */
 
 /* ── Hex Bee Board ──────────────────────────────────────── */
 .board-outer{position:relative;flex-shrink:0;display:flex;align-items:center;justify-content:center}
-#gc{display:block;border-radius:3px;cursor:pointer;touch-action:none}
+#gc{display:block;border-radius:3px;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .sel-info{font-family:'Cinzel',serif;font-size:10px;color:#506080;min-height:14px;text-align:center;letter-spacing:.05em;flex-shrink:0}
 
 /* ── Word Input Area ────────────────────────────────────── */
 .bee-input-wrap{display:flex;gap:6px;align-items:center;width:100%;max-width:520px;padding:0 2px;flex-shrink:0}
-#bee-input{flex:1;background:rgba(8,16,40,.85);border:1px solid #1e3a6e;border-radius:8px;color:#e8d5a0;font-family:'Cinzel',serif;font-size:15px;font-weight:700;letter-spacing:.18em;padding:9px 14px;outline:none;text-transform:uppercase;transition:border-color .2s;text-align:center}
-#bee-input:focus{border-color:#b8860b;box-shadow:0 0 12px rgba(180,140,50,.25)}
-#bee-input:disabled{opacity:.35;cursor:default}
+#bee-input{flex:1;background:rgba(8,16,40,.85);border:1px solid #1e3a6e;border-radius:8px;color:#e8d5a0;font-family:'Cinzel',serif;font-size:15px;font-weight:700;letter-spacing:.18em;padding:9px 14px;outline:none;text-transform:uppercase;transition:border-color .2s;text-align:center;cursor:default;user-select:none;-webkit-user-select:none;min-height:42px;display:flex;align-items:center;justify-content:center;min-width:0;overflow:hidden;white-space:nowrap}
+#bee-input.has-text{border-color:rgba(180,140,50,.4)}
+#bee-input.disabled{opacity:.35;cursor:default}
+#bee-input .cursor{display:inline-block;width:2px;height:1.1em;background:#b8860b;vertical-align:middle;margin-left:1px;animation:blink .9s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+#bee-input .placeholder{color:#506080;font-family:'Crimson Text',serif;font-style:italic;font-weight:400;font-size:13px;letter-spacing:0}
 .wbtn-sub{background:linear-gradient(135deg,#7d5a00,#b8860b);border:1px solid #d4a017;border-radius:8px;color:#050b18;font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:.08em;padding:9px 13px;cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0}
 .wbtn-sub:hover{background:linear-gradient(135deg,#b8860b,#d4a017);box-shadow:0 0 14px rgba(212,160,23,.4);transform:translateY(-1px)}
 .wbtn-sub:disabled{opacity:.3;cursor:default;transform:none}
@@ -211,68 +246,91 @@ body.light .team-bar-block.them{background:rgba(64,176,96,.04);border-color:rgba
 body.light .team-main-track,.body.light .prog-track-sm{background:rgba(0,0,0,.09)}
 body.light .prog-name,.body.light .opp-name{color:#3a2f1a}
 body.light .sel-info{color:#907050}
-body.light #bee-input{background:#fffdf5;border-color:#c8b070;color:#2a1f0a}
+body.light #bee-input{background:#fffdf5;border-color:#c8b070;color:#2a1f0a;}
 body.light .wbtn-clr{background:rgba(180,140,50,.12);border-color:rgba(140,100,20,.4);color:#7a5000}
 body.light .toast{background:rgba(255,252,238,.97);border-color:rgba(140,100,20,.4);color:#2a1f0a}
 body.light #board-notif{background:rgba(255,252,236,.97)}
 body.light .vote-box{background:rgba(255,252,238,.98);border-color:rgba(140,100,20,.3)}
 body.light .vote-box p{color:#706050}
-body.light #mob-drawer{background:transparent;border-color:rgba(140,100,20,.35)}
-body.light .mob-handle{color:#3a2800;text-shadow:0 1px 4px rgba(255,240,180,.9)}
-body.light .mob-tab{color:#6a4a00;text-shadow:0 1px 3px rgba(255,240,180,.8)}
-body.light .mob-tab.active{color:#7a3000;border-bottom-color:#b8860b;text-shadow:0 0 6px rgba(180,100,0,.5)}
+body.light #mob-drawer{background:rgba(240,228,200,.60);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-color:rgba(140,100,20,.4)}
+body.light .mob-handle{color:#5a3800;text-shadow:0 1px 4px rgba(255,240,180,.6)}
+body.light .mob-tab{color:#6a4a10;text-shadow:0 1px 3px rgba(255,240,180,.5)}
+body.light .mob-tab.active{color:#7a3000;border-bottom-color:#b8860b;text-shadow:none}
+body.light .game-col{background:rgba(240,234,216,.60)}
+body.light .chat-col{background:rgba(255,252,242,.97);border-color:rgba(140,100,20,.18)}
+body.light .ad-col{background:rgba(245,240,228,.8);border-color:rgba(140,100,20,.1)}
+body.light .vbar-track{background:rgba(0,0,0,.08)}
+body.light .ad-placeholder{border-color:rgba(140,100,20,.2);color:#a09060}
+body.light .ad-placeholder span{color:#a09060}
+body.light .words-section{border-color:rgba(140,100,20,.14)}
+body.light .chat-tab{color:#907050;border-color:transparent}
+body.light .chat-tab.active{color:#7a5000;border-bottom-color:#b8860b}
+body.light .profile-name{color:#7a5000}
+body.light .rid{color:#907050}
+body.light .rid span{color:#7a5000}
+body.light #td{color:#7a5000}
 
 /* ── Mobile ─────────────────────────────────────────────── */
 @media(max-width:640px){
   html,body{overflow:hidden;height:100dvh;touch-action:manipulation}
   #gs{overflow:hidden!important}
+  /* Stack all columns, hide chat+ad cols — use drawer */
   .gl{display:block!important;position:relative;width:100vw;height:100dvh}
-  .sp{display:none!important}
-  .cc2{position:absolute!important;top:0;left:0;right:0;bottom:0;padding:2px 2px!important;overflow-y:auto!important;gap:3px!important;align-items:center!important}
-  .ctrls{gap:3px!important;padding:1px 0!important}
-  #td{font-size:11px!important;padding:3px 10px!important}
-  .rotbtn,.actbtn,.drawbtn{font-size:9px!important;padding:3px 7px!important}
-  .team-prog-wrap{gap:3px!important}
-  .team-bar-block{padding:4px 7px!important;gap:3px!important}
-  .team-label{font-size:9px!important}
-  .team-pct-big{font-size:10px!important}
-  .team-main-track{height:7px!important}
-  .player-row{padding:1px 0!important}
-  .prog-name,.opp-name{font-size:8px!important;min-width:32px!important}
-  .heart{font-size:8px!important}
+  .chat-col{display:none!important}
+  .ad-col{display:none!important}
+  .game-col{position:absolute!important;top:0;left:0;right:0;bottom:0;overflow:hidden!important;padding:4px!important;gap:4px!important}
+  /* Profile row compact */
+  .profile-row{padding:0!important}
+  .profile-pic{width:32px!important;height:32px!important;font-size:14px!important}
+  .profile-name{font-size:9px!important;max-width:60px!important}
+  /* Timer smaller */
+  #td{font-size:16px!important}
+  .ctrls{gap:3px!important}
+  .rotbtn,.actbtn,.drawbtn{font-size:8px!important;padding:3px 6px!important}
+  /* Vertical bars thinner */
+  .vbar-wrap{width:30px!important}
+  .vbar-track{width:10px!important}
+  .vbar-count{font-size:11px!important}
+  .vbar-label{font-size:7px!important}
+  /* Input */
   .bee-input-wrap{gap:4px!important;padding:0!important}
-  #bee-input{font-size:13px!important;padding:7px 10px!important;letter-spacing:.12em!important}
-  .wbtn-sub{font-size:10px!important;padding:7px 10px!important}
-  .wbtn-clr{width:30px!important;min-width:30px!important;height:30px!important}
-  .sel-info{font-size:9px!important;min-height:11px!important}
+  #bee-input{font-size:13px!important;padding:6px 8px!important;letter-spacing:.1em!important;min-height:34px!important}
+  .wbtn-sub{font-size:10px!important;padding:6px 9px!important}
+  .wbtn-clr{width:28px!important;min-width:28px!important;height:28px!important}
+  .sel-info{font-size:9px!important;min-height:10px!important}
   #mob-drawer{
     position:fixed;bottom:0;left:0;right:0;
-    background:transparent;
-    backdrop-filter:none;-webkit-backdrop-filter:none;
-    border-top:1px solid rgba(180,140,50,.30);
-    border-radius:14px 14px 0 0;
+    background:rgba(6,12,28,.55);
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    border-top:1px solid rgba(180,140,50,.35);
+    border-radius:16px 16px 0 0;
     z-index:100;max-height:65dvh;
     display:flex;flex-direction:column;
     transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)
   }
   #mob-drawer.open{transform:translateY(0)}
   .mob-handle{
-    text-align:center;padding:7px 0 5px;
-    font-family:'Cinzel',serif;font-size:13px;font-weight:700;letter-spacing:.10em;
-    color:#e8f0f8;cursor:pointer;flex-shrink:0;line-height:1;
-    background:transparent;text-shadow:0 1px 6px rgba(0,0,0,.95)
+    text-align:center;padding:8px 0 5px;
+    font-family:'Cinzel',serif;font-size:12px;font-weight:700;letter-spacing:.12em;
+    color:#ffe680;cursor:pointer;flex-shrink:0;line-height:1;
+    background:transparent;
+    text-shadow:0 1px 8px rgba(0,0,0,.9),0 0 12px rgba(0,0,0,.7)
   }
-  .mob-tabs{display:flex;flex-shrink:0;border-bottom:1px solid rgba(180,140,50,.20);background:transparent}
+  .mob-handle::before{
+    content:'';display:block;margin:0 auto 7px;
+    width:32px;height:3px;border-radius:2px;background:rgba(180,140,50,.5)
+  }
+  .mob-tabs{display:flex;flex-shrink:0;border-bottom:1px solid rgba(180,140,50,.22);background:transparent}
   .mob-tab{
-    flex:1;font-family:'Cinzel',serif;font-size:12px;font-weight:700;letter-spacing:.08em;
-    padding:9px 4px 7px;text-align:center;color:#d0dde8;cursor:pointer;
-    border:none;background:transparent;transition:color .15s;
-    text-shadow:0 1px 4px rgba(0,0,0,.9)
+    flex:1;font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:.07em;
+    padding:9px 4px 7px;text-align:center;color:#c0d0e8;cursor:pointer;
+    border:none;border-bottom:2px solid transparent;background:transparent;transition:color .15s,border-color .15s;
+    text-shadow:0 1px 6px rgba(0,0,0,.8)
   }
-  .mob-tab.active{color:#ffe080;border-bottom:2px solid #ffe080;background:transparent;text-shadow:0 0 8px rgba(255,200,0,.6)}
+  .mob-tab.active{color:#ffe080;border-bottom-color:#d4a017;text-shadow:0 0 8px rgba(255,200,0,.5)}
   .mob-panel{display:none;flex:1;overflow-y:auto;flex-direction:column;min-height:0;background:transparent}
   .mob-panel.active{display:flex}
-  #mob-openbtn{position:fixed;bottom:10px;right:10px;width:40px;height:40px;border-radius:50%;background:rgba(180,140,50,.22);border:1px solid rgba(180,140,50,.45);color:#d4a017;font-size:17px;cursor:pointer;z-index:99;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 12px rgba(0,0,0,.55)}
+  #mob-openbtn{position:fixed;bottom:14px;right:14px;width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,#7d5a00,#b8860b);border:2px solid rgba(212,160,23,.7);color:#fff;font-size:20px;cursor:pointer;z-index:200;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 18px rgba(0,0,0,.6),0 0 0 3px rgba(180,140,50,.15)}
 }
 @media(min-width:641px){#mob-drawer{display:none!important}#mob-openbtn{display:none!important}}
 @media(max-width:640px){#mob-openbtn{display:flex}}
@@ -319,66 +377,131 @@ body.light .mob-tab.active{color:#7a3000;border-bottom-color:#b8860b;text-shadow
 <div id="gs" class="screen">
   <div class="gl">
 
-    <!-- Left: team chat -->
-    <div class="sp">
-      <div class="ph">🛡<span>TEAM CHAT</span><span id="tld" class="tbadge">—</span></div>
-      <div id="tcm" class="cm"></div>
-      <div class="cir">
-        <input type="text" id="tci" placeholder="Message ally…" maxlength="200"/>
-        <button id="tsb" class="sb">➤</button>
+    <!-- ── GAME COLUMN (56%) ── -->
+    <div class="game-col" id="center-col">
+
+      <!-- Profile row: Team A left | controls center | Team B right -->
+      <div class="profile-row">
+        <!-- Team A profiles -->
+        <div class="profile-slot">
+          <div class="profile-pic" id="prof-red">👤</div>
+          <div class="profile-info">
+            <span class="profile-name" id="pname-red">Cobalt</span>
+            <span class="profile-team ta">Team A</span>
+          </div>
+        </div>
+
+        <!-- Center: timer + controls -->
+        <div class="profile-center">
+          <div id="td">5:00</div>
+          <div class="ctrls">
+            <button class="rotbtn" id="shufflebtn">🔀</button>
+            <button class="rotbtn" id="themebtn">🎨</button>
+            <button class="actbtn" id="resbtn">⚑</button>
+            <button class="drawbtn" id="drawbtn">🤝</button>
+          </div>
+          <div class="rid" style="border:none;margin:0;padding:0">Room: <span id="rs">—</span></div>
+        </div>
+
+        <!-- Team B profiles -->
+        <div class="profile-slot right">
+          <div class="profile-pic" id="prof-blue">👤</div>
+          <div class="profile-info right">
+            <span class="profile-name" id="pname-blue">Emerald</span>
+            <span class="profile-team tb">Team B</span>
+          </div>
+        </div>
       </div>
-      <div class="pls" id="my-words-wrap" style="flex:1;overflow-y:auto;min-height:0;display:flex;flex-direction:column">
-        <div class="stl" style="display:flex;align-items:center;gap:6px">Our Words <span id="my-words-count" style="background:rgba(180,140,50,.18);border-radius:100px;padding:1px 7px;color:#d4a017;font-size:9px">0</span></div>
-        <div id="my-words-list" style="overflow-y:auto;flex:1;display:flex;flex-wrap:wrap;gap:3px;align-content:flex-start;padding-top:4px"></div>
+
+      <!-- Board + vertical bars -->
+      <div class="board-and-bars">
+
+        <!-- Left vertical bar: Team A -->
+        <div class="vbar-wrap">
+          <div class="vbar-count ta" id="vbar-a-count">0</div>
+          <div class="vbar-track" id="vbar-a-track">
+            <div class="vbar-fill ta" id="vbar-a-fill" style="height:0%"></div>
+          </div>
+          <div class="vbar-label ta">TEAM A<br>WORDS</div>
+        </div>
+
+        <!-- Ring Board -->
+        <div class="board-outer">
+          <canvas id="gc" width="340" height="340"></canvas>
+          <div id="board-notif"><div class="bn-title" id="bn-title"></div><div class="bn-sub" id="bn-sub"></div></div>
+        </div>
+
+        <!-- Right vertical bar: Team B -->
+        <div class="vbar-wrap">
+          <div class="vbar-count tb" id="vbar-b-count">0</div>
+          <div class="vbar-track" id="vbar-b-track">
+            <div class="vbar-fill tb" id="vbar-b-fill" style="height:0%"></div>
+          </div>
+          <div class="vbar-label tb">TEAM B<br>WORDS</div>
+        </div>
+
       </div>
-      <div class="pls" style="flex-shrink:0">
+
+      <!-- Bottom: word input + hint -->
+      <div class="game-bottom">
+        <div class="bee-input-wrap" style="max-width:480px;width:100%">
+          <div id="bee-input" role="textbox" aria-label="Current word" tabindex="-1"></div>
+          <button class="wbtn-sub" id="sub-btn">ENTER</button>
+          <button class="wbtn-clr" id="clr-btn">✕</button>
+        </div>
+        <div class="sel-info" id="sel-info">Click letters · center letter required · min 3 letters</div>
+      </div>
+
+    </div>
+
+    <!-- ── CHAT + WORDS COLUMN (24%) ── -->
+    <div class="chat-col">
+      <div class="ph">💬 <span>CHAT</span> <span id="tld" class="tbadge">—</span></div>
+
+      <!-- Chat tabs -->
+      <div class="chat-tabs">
+        <button class="chat-tab active" data-panel="tchat">🛡 Team</button>
+        <button class="chat-tab" data-panel="pchat">📢 Public</button>
+      </div>
+
+      <!-- Team chat panel -->
+      <div class="chat-panel active" id="chat-tchat">
+        <div id="tcm" class="cm"></div>
+        <div class="cir">
+          <input type="text" id="tci" placeholder="Team…" maxlength="200"/>
+          <button id="tsb" class="sb">➤</button>
+        </div>
+      </div>
+
+      <!-- Public chat panel -->
+      <div class="chat-panel" id="chat-pchat">
+        <div id="pcm" class="cm"></div>
+        <div class="cir">
+          <input type="text" id="pci" placeholder="Global…" maxlength="200"/>
+          <button id="psb" class="sb">➤</button>
+        </div>
+      </div>
+
+      <!-- Words found -->
+      <div class="words-section">
+        <div class="stl">Our Words <span id="my-words-count" style="background:rgba(180,140,50,.18);border-radius:100px;padding:1px 6px;color:#d4a017;font-size:9px">0</span></div>
+        <div id="my-words-list" style="display:flex;flex-wrap:wrap;gap:3px;padding-top:4px"></div>
+      </div>
+
+      <!-- Players -->
+      <div style="padding:6px 8px;border-top:1px solid rgba(180,140,50,.1);flex-shrink:0">
         <div class="stl">Players</div>
         <div id="pl"></div>
-        <div class="rid">Room: <span id="rs">—</span></div>
       </div>
+
     </div>
 
-    <!-- Centre: hex board + word input -->
-    <div class="cc2" id="center-col">
-      <div class="ctrls">
-        <div id="td">5:00</div>
-        <button class="rotbtn" id="shufflebtn">🔀 Shuffle</button>
-        <button class="rotbtn" id="themebtn">🎨 Theme</button>
-        <button class="actbtn" id="resbtn">⚑ Resign</button>
-        <button class="drawbtn" id="drawbtn">🤝 Draw</button>
-      </div>
-
-      <!-- Two team progress bars -->
-      <div class="team-prog-wrap" id="prog-wrap"></div>
-
-      <!-- Hex Board -->
-      <div class="board-outer">
-        <canvas id="gc" width="340" height="340"></canvas>
-        <div id="board-notif"><div class="bn-title" id="bn-title"></div><div class="bn-sub" id="bn-sub"></div></div>
-      </div>
-
-      <!-- Word input -->
-      <div class="bee-input-wrap">
-        <input type="text" id="bee-input" placeholder="Type or click letters…" maxlength="15"
-          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-        <button class="wbtn-sub" id="sub-btn">ENTER</button>
-        <button class="wbtn-clr" id="clr-btn">✕</button>
-      </div>
-
-      <div class="sel-info" id="sel-info">Click letters or type · center letter required · min 3 letters</div>
-    </div>
-
-    <!-- Right: public chat + word log -->
-    <div class="sp rp">
-      <div class="ph">📢<span>PUBLIC CHAT</span></div>
-      <div id="pcm" class="cm"></div>
-      <div class="cir">
-        <input type="text" id="pci" placeholder="Global message…" maxlength="200"/>
-        <button id="psb" class="sb">➤</button>
-      </div>
-      <div class="gls">
-        <div class="stl">Team Words Found</div>
-        <div id="ml" class="ml"></div>
+    <!-- hidden word log feed for mobile --><div id="ml" style="display:none"></div>
+    <!-- ── AD COLUMN (20%) ── -->
+    <div class="ad-col">
+      <div class="ad-placeholder">
+        <div class="ad-icon">📢</div>
+        <span>Advertisement</span>
       </div>
     </div>
 
@@ -669,24 +792,24 @@ function getHexAt(px,py,cv){
 // ── Resize canvas ──────────────────────────────────────────
 function resizeCanvas(){
   const cv=document.getElementById('gc');
-  const col=document.getElementById('center-col');
-  if(!cv||!col)return;
+  const boardArea=document.querySelector('.board-and-bars');
+  if(!cv)return;
   const mob=window.innerWidth<=640;
   let w;
   if(mob){
     const vw=window.innerWidth;
     const vh=window.innerHeight;
-    const maxH=vh-260;
-    w=Math.min(vw-10,maxH,300);
-    w=Math.max(w,200);
+    w=Math.min(vw-14,vh-280,300);
+    w=Math.max(w,180);
   } else {
-    const colW=col.clientWidth||480;
-    const maxH=window.innerHeight-290;
-    w=Math.min(colW-20,maxH,340);
-    w=Math.max(w,240);
+    // Available width = board-and-bars minus two vbars (44px each + 10px gap each)
+    const bw=boardArea?boardArea.clientWidth:500;
+    const avail=bw-108-20; // 2 vbars + gaps
+    const maxH=window.innerHeight-230;
+    w=Math.min(avail,maxH,400);
+    w=Math.max(w,220);
   }
-  const h=w; // square canvas — ring fits perfectly
-  cv.width=w;cv.height=h;cv.style.width=w+'px';cv.style.height=h+'px';
+  cv.width=w;cv.height=w;cv.style.width=w+'px';cv.style.height=w+'px';
   paint();
 }
 
@@ -721,22 +844,43 @@ function canvasTouch(e){
   canvasClick({clientX:t.clientX,clientY:t.clientY});
 }
 
-// ── Word input helpers ─────────────────────────────────────
+// ── Word display (div-based, no keyboard) ─────────────────
+let _wordBuf='';  // current word being built
+let _inputEnabled=false;
+
+function renderWordBuf(){
+  const el=document.getElementById('bee-input');
+  if(!el)return;
+  if(!_wordBuf){
+    el.innerHTML='<span class="placeholder">Click letters to build a word…</span>';
+    el.classList.remove('has-text');
+  } else {
+    el.innerHTML=_wordBuf+'<span class="cursor"></span>';
+    el.classList.add('has-text');
+  }
+}
+
 function addLetterToInput(letter){
-  const inp=document.getElementById('bee-input');
-  if(!inp||inp.disabled)return;
-  if(inp.value.length>=15)return;
-  inp.value+=letter.toUpperCase();
-  inp.focus();
+  if(!_inputEnabled)return;
+  if(_wordBuf.length>=15)return;
+  _wordBuf+=letter.toUpperCase();
+  renderWordBuf();
+}
+
+function clearWordBuf(){
+  _wordBuf='';
+  renderWordBuf();
 }
 
 function setInputEnabled(on){
-  const inp=document.getElementById('bee-input');
+  _inputEnabled=on;
   const sub=document.getElementById('sub-btn');
   const clr=document.getElementById('clr-btn');
-  if(inp)inp.disabled=!on;
+  const el=document.getElementById('bee-input');
   if(sub)sub.disabled=!on;
   if(clr)clr.disabled=!on;
+  if(el)el.classList.toggle('disabled',!on);
+  if(!on){_wordBuf='';renderWordBuf();}
 }
 
 // ── Dictionary validation ──────────────────────────────────
@@ -755,23 +899,22 @@ async function isValidWord(word){
 
 // ── Submit word ────────────────────────────────────────────
 async function submitWord(){
-  const inp=document.getElementById('bee-input');
-  if(!inp||!GS||GS.winner||_validating)return;
-  const word=inp.value.toLowerCase().trim();
-  if(!word){inp.focus();return;}
-  inp.value='';
+  if(!GS||GS.winner||_validating)return;
+  const word=_wordBuf.toLowerCase().trim();
+  if(!word)return;
+  clearWordBuf();
 
   // ── Local checks first ──
   if(word.length<3){
     showToast('Too short! Min 3 letters.');
     document.getElementById('sel-info').textContent='Too short! Minimum 3 letters.';
-    inp.focus();return;
+    return;
   }
 
   if(!word.includes(_letters.center.toLowerCase())){
     showToast(`Must contain "${_letters.center}"!`);
     document.getElementById('sel-info').textContent=`Must contain center letter "${_letters.center}"!`;
-    inp.focus();return;
+    return;
   }
 
   const avail=[_letters.center,..._letters.ring].map(l=>l.toLowerCase());
@@ -779,7 +922,7 @@ async function submitWord(){
     if(!/[a-z]/.test(ch)||!avail.includes(ch)){
       showToast(`"${ch.toUpperCase()}" is not in the hive!`);
       document.getElementById('sel-info').textContent=`"${ch.toUpperCase()}" is not available.`;
-      inp.focus();return;
+      return;
     }
   }
 
@@ -788,7 +931,7 @@ async function submitWord(){
   if(teamWords[word]){
     showToast(`"${word.toUpperCase()}" already found!`);
     document.getElementById('sel-info').textContent=`Already found by your team!`;
-    inp.focus();return;
+    return;
   }
 
   // ── Dictionary check ──
@@ -810,7 +953,7 @@ async function submitWord(){
     showToast(`"${word.toUpperCase()}" — not a valid word.`);
     document.getElementById('sel-info').textContent=`"${word.toUpperCase()}" is not a valid word. Try again!`;
   }
-  inp.focus();
+
 }
 
 // ── Timer ──────────────────────────────────────────────────
@@ -847,62 +990,30 @@ function checkTimeUp(){
   update(roomRef,{winner});
 }
 
-// ── Team progress ──────────────────────────────────────────
+// ── Team progress — vertical bars ────────────────────────
 function updateProgress(){
-  const wrap=document.getElementById('prog-wrap');
-  if(!wrap)return;
-
+  if(!GS)return;
   const myColors=COLORS.filter(c=>TEAMS[c]===_myTeam);
   const oppColors=COLORS.filter(c=>TEAMS[c]===_oppTeam);
-
-  const myScore={};
-  myColors.forEach(c=>myScore[c]=0);
-  Object.values(_myWords).forEach(w=>{if(myScore[w.color]!==undefined)myScore[w.color]++;});
-  const myTotal=Object.values(myScore).reduce((a,b)=>a+b,0);
+  const myTotal=Object.values(_myWords).length;
   const oppTotal=_oppWordCount||0;
-  const maxW=Math.max(myTotal,oppTotal,5);
-  const myPct=Math.round(myTotal/maxW*100);
-  const oppPct=Math.round(oppTotal/maxW*100);
+  const maxW=Math.max(myTotal,oppTotal,1);
 
-  const myPlayersHTML=myColors.map(c=>{
-    const pm=PM[c];const s=myScore[c]||0;
-    const frac=myTotal>0?Math.round(s/myTotal*100):0;
-    return`<div class="player-row">
-      <div class="prog-dot" style="background:${pm.dot}"></div>
-      <span class="prog-name">${pm.label}</span>
-      <div class="prog-track-sm"><div class="prog-fill-sm" style="width:${frac}%;background:${pm.prog}"></div></div>
-      <span class="prog-pct-sm">${s}w</span>
-    </div>`;
-  }).join('');
+  // Which bar is A, which is B
+  const aTotal=_myTeam==='A'?myTotal:oppTotal;
+  const bTotal=_myTeam==='B'?myTotal:oppTotal;
 
-  const oppPlayersHTML=oppColors.map(c=>{
-    const pm=PM[c];
-    return`<div class="opp-player">
-      <div class="prog-dot" style="background:${pm.dot}"></div>
-      <span class="opp-name">${pm.label}</span>
-      <div style="flex:1"></div>
-    </div>`;
-  }).join('');
-
-  wrap.innerHTML=`
-    <div class="team-bar-block us">
-      <div class="team-bar-header">
-        <span class="team-label">⚔ OUR TEAM</span>
-        <span class="team-tag">Team ${_myTeam}</span>
-        <span class="team-pct-big">${myTotal} word${myTotal===1?'':'s'}</span>
-      </div>
-      <div class="team-main-track"><div class="team-main-fill" style="width:${myPct}%"></div></div>
-      <div class="player-rows">${myPlayersHTML}</div>
-    </div>
-    <div class="team-bar-block them">
-      <div class="team-bar-header">
-        <span class="team-label">🔒 ENEMY TEAM</span>
-        <span class="team-tag">Team ${_oppTeam}</span>
-        <span class="team-pct-big" style="color:#40b060">${oppTotal} word${oppTotal===1?'':'s'}</span>
-      </div>
-      <div class="team-main-track"><div class="team-main-fill" style="width:${oppPct}%;background:linear-gradient(90deg,#208040,#40b060)"></div></div>
-      <div class="opp-mystery">${oppPlayersHTML}</div>
-    </div>`;
+  // Update vertical bars
+  const aFill=document.getElementById('vbar-a-fill');
+  const bFill=document.getElementById('vbar-b-fill');
+  const aCount=document.getElementById('vbar-a-count');
+  const bCount=document.getElementById('vbar-b-count');
+  const aPct=Math.min(100,Math.round(aTotal/Math.max(aTotal,bTotal,1)*100));
+  const bPct=Math.min(100,Math.round(bTotal/Math.max(aTotal,bTotal,1)*100));
+  if(aFill)aFill.style.height=aPct+'%';
+  if(bFill)bFill.style.height=bPct+'%';
+  if(aCount)aCount.textContent=aTotal;
+  if(bCount)bCount.textContent=bTotal;
 }
 
 // ── Snapshot handler ───────────────────────────────────────
@@ -955,6 +1066,19 @@ function renderPlayers(players){
     </div>`;
   }).join('');
   ['pl','mob-pl'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=html;});
+  // Update profile name slots at top of game col
+  // Team A = red + gold, Team B = blue + green
+  // Show first found player per team in each slot
+  const redP=Object.values(players).find(x=>x.color==='red');
+  const goldP=Object.values(players).find(x=>x.color==='gold');
+  const blueP=Object.values(players).find(x=>x.color==='blue');
+  const greenP=Object.values(players).find(x=>x.color==='green');
+  const elPR=document.getElementById('pname-red');
+  const elPB=document.getElementById('pname-blue');
+  const elPG=document.getElementById('pname-green');
+  const elPGo=document.getElementById('pname-gold');
+  if(elPR)elPR.textContent=redP?redP.name:'Cobalt';
+  if(elPB)elPB.textContent=blueP?blueP.name:'Emerald';
 }
 
 // ── Word log ───────────────────────────────────────────────
@@ -1041,6 +1165,17 @@ function startGame(rid){
   syncChat(ref(db,`beeRooms/${roomId}/chat/team${_myTeam}`),['tcm','mob-tcm']);
   syncChat(ref(db,`beeRooms/${roomId}/chat/public`),['pcm','mob-pcm']);
 
+  // Desktop chat tab switching
+  document.querySelectorAll('.chat-tab').forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      document.querySelectorAll('.chat-tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.chat-panel').forEach(p=>p.classList.remove('active'));
+      tab.classList.add('active');
+      const panel=document.getElementById('chat-'+tab.dataset.panel);
+      if(panel)panel.classList.add('active');
+    });
+  });
+
   const cv=document.getElementById('gc');
   cv.addEventListener('click',canvasClick);
   cv.addEventListener('mousemove',canvasHover);
@@ -1048,19 +1183,20 @@ function startGame(rid){
   cv.addEventListener('touchstart',canvasTouch,{passive:false});
 
   // Word input wiring
-  const inp=document.getElementById('bee-input');
-  inp.addEventListener('input',e=>{
-    if(!_letters)return;
-    const avail=[_letters.center,..._letters.ring].map(l=>l.toLowerCase());
-    let v='';
-    for(const ch of e.target.value.toUpperCase()){
-      if(/[A-Z]/.test(ch)&&avail.includes(ch.toLowerCase()))v+=ch;
+  // Desktop keyboard support (no-op on mobile since no keyboard appears)
+  document.addEventListener('keydown',e=>{
+    if(!_inputEnabled||!_letters||GS?.winner)return;
+    if(e.key==='Enter'){e.preventDefault();submitWord();return;}
+    if(e.key==='Backspace'||e.key==='Delete'){e.preventDefault();_wordBuf=_wordBuf.slice(0,-1);renderWordBuf();return;}
+    if(e.key==='Escape'){clearWordBuf();return;}
+    const ch=e.key.toUpperCase();
+    if(/^[A-Z]$/.test(ch)){
+      const avail=[_letters.center,..._letters.ring].map(l=>l.toUpperCase());
+      if(avail.includes(ch))addLetterToInput(ch);
     }
-    e.target.value=v;
   });
-  inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();submitWord();}});
   document.getElementById('sub-btn').addEventListener('click',submitWord);
-  document.getElementById('clr-btn').addEventListener('click',()=>{inp.value='';inp.focus();});
+  document.getElementById('clr-btn').addEventListener('click',()=>{clearWordBuf();});
 
   // Controls
   document.getElementById('shufflebtn').addEventListener('click',()=>{
@@ -1118,7 +1254,7 @@ function startGame(rid){
 
   push(ref(db,`beeRooms/${roomId}/chat/public`),{text:`${PM[myColor].label} (${myName}) joined — Team ${_myTeam}!`,name:'System',color:'system',ts:Date.now()});
   setInputEnabled(true);
-  inp.focus();
+
 }
 
 // ── Join / create room ─────────────────────────────────────
