@@ -432,8 +432,19 @@ body.light #td{color:#7a5000}
       <!-- Board + vertical bars -->
       <div class="board-and-bars">
 
-        <!-- Left bars: my-team left players (red+gold or blue+green depending on team) -->
-        <div class="vbar-group" id="vbar-left"></div>
+        <!-- Left bars: my team players + team total -->
+        <div style="display:flex;align-items:stretch;gap:6px;flex-shrink:0;padding:4px 0">
+          <div class="vbar-group" id="vbar-left"></div>
+          <!-- Team total bar -->
+          <div class="vbar-wrap" style="border-left:1px solid rgba(34,197,94,.2);padding-left:6px">
+            <div style="font-family:'Cinzel',serif;font-size:8px;color:#22c55e;text-align:center;font-weight:700">TOT</div>
+            <div class="vbar-count my" id="vbar-total-my-count">0</div>
+            <div class="vbar-track" style="width:14px">
+              <div class="vbar-fill my" id="vbar-total-my" style="height:0%"></div>
+            </div>
+            <div class="vbar-name my">TEAM</div>
+          </div>
+        </div>
 
         <!-- Ring Board -->
         <div class="board-outer">
@@ -441,8 +452,19 @@ body.light #td{color:#7a5000}
           <div id="board-notif"><div class="bn-title" id="bn-title"></div><div class="bn-sub" id="bn-sub"></div></div>
         </div>
 
-        <!-- Right bars: opp-team players -->
-        <div class="vbar-group" id="vbar-right"></div>
+        <!-- Right bars: opp players + team total -->
+        <div style="display:flex;align-items:stretch;gap:6px;flex-shrink:0;padding:4px 0">
+          <!-- Team total bar -->
+          <div class="vbar-wrap" style="border-right:1px solid rgba(239,68,68,.2);padding-right:6px">
+            <div style="font-family:'Cinzel',serif;font-size:8px;color:#ef4444;text-align:center;font-weight:700">TOT</div>
+            <div class="vbar-count opp" id="vbar-total-opp-count">0</div>
+            <div class="vbar-track" style="width:14px">
+              <div class="vbar-fill opp" id="vbar-total-opp" style="height:0%"></div>
+            </div>
+            <div class="vbar-name opp">TEAM</div>
+          </div>
+          <div class="vbar-group" id="vbar-right"></div>
+        </div>
 
       </div>
 
@@ -662,7 +684,7 @@ function buildLetters(roomId){
 }
 
 // ── State ──────────────────────────────────────────────────
-let _tIdx=0;
+let _tIdx=1;
 let _letters=null;    // {center:'A', ring:['B','C','D','E','F','G','H']}
 let _myWords={};      // teamWords[myTeam] — my team's found words
 let _oppWordCount=0;  // opponent team word count
@@ -995,7 +1017,6 @@ function checkTimeUp(){
 function buildVbarGroup(containerId, colors, isMySide, allWords){
   const container=document.getElementById(containerId);
   if(!container)return;
-  // Compute per-player word count (only my team has detail; opp has only total)
   const perPlayer={};
   colors.forEach(c=>{perPlayer[c]=0;});
   if(isMySide){
@@ -1003,11 +1024,6 @@ function buildVbarGroup(containerId, colors, isMySide, allWords){
       if(perPlayer[w.color]!==undefined)perPlayer[w.color]++;
     });
   }
-  const teamTotal=isMySide
-    ?Object.values(perPlayer).reduce((a,b)=>a+b,0)
-    :(_oppWordCount||0);
-
-  // Max across all bars for scaling
   const myTotal=Object.values(_myWords).length;
   const oppTotal=_oppWordCount||0;
   const maxW=Math.max(myTotal,oppTotal,1);
@@ -1015,18 +1031,28 @@ function buildVbarGroup(containerId, colors, isMySide, allWords){
 
   container.innerHTML=colors.map(c=>{
     const pm=PM[c];
-    const count=isMySide?perPlayer[c]:Math.round((_oppWordCount||0)/2);
+    const count=isMySide?perPlayer[c]:0; // opp total shown on team total bar
     const pct=Math.min(100,Math.round(count/maxW*100));
     const playerName=_cachedPlayers[c]||pm.label;
     return`<div class="vbar-wrap">
       <div class="vbar-pic ${cls}" id="vbar-pic-${c}" title="${playerName}">👤</div>
-      <div class="vbar-count ${cls}">${isMySide?count:''}</div>
+      <div class="vbar-count ${cls}" id="vbar-count-${c}">${count}</div>
       <div class="vbar-track">
         <div class="vbar-fill ${cls}" id="vbar-fill-${c}" style="height:${pct}%"></div>
       </div>
       <div class="vbar-name ${cls}" id="vbar-name-${c}">${playerName.slice(0,6)}</div>
     </div>`;
   }).join('');
+
+  // ── Total bar for this team ──
+  const total=isMySide?myTotal:oppTotal;
+  const totalPct=Math.min(100,Math.round(total/maxW*100));
+  const totalBarId=isMySide?'vbar-total-my':'vbar-total-opp';
+  const totalCountId=isMySide?'vbar-total-my-count':'vbar-total-opp-count';
+  const tb=document.getElementById(totalBarId);
+  const tc=document.getElementById(totalCountId);
+  if(tb)tb.style.height=totalPct+'%';
+  if(tc)tc.textContent=total;
 }
 
 function updateProgress(){
@@ -1192,6 +1218,14 @@ function startGame(rid){
   document.getElementById('gs').classList.add('active');
   document.getElementById('rs').textContent=roomId;
   document.getElementById('tld').textContent='Team '+_myTeam;
+  // Apply my/opp border colors immediately — don't wait for Firebase
+  COLORS.forEach(c=>{
+    const cls=TEAMS[c]===_myTeam?'my':'opp';
+    const pic=document.getElementById('prof-'+c);
+    const nm=document.getElementById('pname-'+c);
+    if(pic)pic.className='profile-pic '+cls;
+    if(nm)nm.className='profile-name '+cls;
+  });
   resizeCanvas();window.addEventListener('resize',resizeCanvas);
   paint();
 
