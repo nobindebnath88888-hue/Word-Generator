@@ -1029,8 +1029,6 @@ function buildVbarGroup(containerId, colors, isMySide, allWords){
   }).join('');
 }
 
-let _cachedPlayers={};  // color -> name
-
 function updateProgress(){
   if(!GS)return;
   const myColors=COLORS.filter(c=>TEAMS[c]===_myTeam);
