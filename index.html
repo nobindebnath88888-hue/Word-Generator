@@ -209,12 +209,11 @@ body.light .word-pill.gold{background:rgba(180,100,0,.1);border-color:rgba(180,1
 .rvbtn.yes:hover{background:rgba(39,174,96,.35)}
 .rvbtn.no{background:rgba(192,57,43,.18);border-color:#c0392b;color:#e74c3c}
 .rvbtn.no:hover{background:rgba(192,57,43,.35)}
-#uimode-btn{position:fixed;top:12px;right:14px;z-index:9000;width:38px;height:38px;border-radius:50%;border:1.5px solid rgba(180,140,50,.45);background:rgba(10,22,50,.75);backdrop-filter:blur(8px);color:#d4a017;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,.45);transition:background .3s,border-color .3s,transform .2s}
-#uimode-btn:hover{transform:scale(1.12)}
+
 
 /* ── LIGHT MODE ─────────────────────────────────────────── */
 body.light{background:#f0ebe0;background-image:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(200,180,130,.35) 0%,transparent 60%);color:#2a1f0a}
-body.light #uimode-btn{background:rgba(255,252,240,.88);border-color:rgba(140,100,20,.45);color:#7a5a00}
+
 body.light .lcard{background:rgba(255,252,240,.97);border-color:rgba(140,100,20,.28);box-shadow:0 4px 40px rgba(100,70,10,.15)}
 body.light .gsub{color:#7a6a50}
 body.light input[type=text]{background:#fffdf5;border-color:#c8b070;color:#2a1f0a}
@@ -380,33 +379,31 @@ body.light #td{color:#7a5000}
 
   /* ── Floating chat overlay ── */
   /* Button: bottom-left, above ad */
+  /* Chat button lives inside the words-found row header — not fixed */
   #mob-chat-btn{
-    position:fixed;
-    bottom:calc(20dvh + 10px);
-    left:12px;
-    width:42px;height:42px;
-    border-radius:50%;
-    background:rgba(6,12,28,.75);
-    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-    border:1.5px solid rgba(180,140,50,.45);
-    color:#d4a017;font-size:18px;
-    cursor:pointer;z-index:300;
+    width:30px;height:30px;
+    border-radius:8px;
+    background:rgba(180,140,50,.15);
+    border:1px solid rgba(180,140,50,.35);
+    color:#d4a017;font-size:15px;
+    cursor:pointer;
     display:flex;align-items:center;justify-content:center;
-    box-shadow:0 3px 14px rgba(0,0,0,.55);
-    transition:transform .15s;
+    flex-shrink:0;
+    transition:background .15s;
   }
-  #mob-chat-btn:active{transform:scale(.92)}
+  #mob-chat-btn:active{background:rgba(180,140,50,.3);}
 
-  /* Chat overlay panel: floats above interface, stops above ad */
+  /* Chat overlay: sits between words-found top and ad top, never touches ad */
   #mob-chat-overlay{
     position:fixed;
-    bottom:calc(20dvh + 2px);
+    bottom:20dvh;   /* sits exactly on top of ad */
     left:0;right:0;
-    height:55dvh;
-    background:rgba(6,12,28,.52);
+    max-height:52dvh;  /* can never bleed above the interface */
+    height:52dvh;
+    background:rgba(6,12,28,.55);
     backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
     border-top:1px solid rgba(180,140,50,.3);
-    border-radius:16px 16px 0 0;
+    border-left:none;border-right:none;
     z-index:250;
     display:flex;flex-direction:column;
     transform:translateY(100%);
@@ -513,7 +510,7 @@ body.light #td{color:#7a5000}
 
         <!-- Center: timer + controls -->
         <div class="profile-center">
-          <div id="td">5:00</div>
+          <div id="td">8:00</div>
           <div class="ctrls">
             <button class="rotbtn" id="shufflebtn">🔀</button>
             <button class="rotbtn" id="themebtn">🎨</button>
@@ -611,6 +608,8 @@ body.light #td{color:#7a5000}
         <div class="stl" style="display:flex;align-items:center;gap:5px;margin-bottom:4px">
           🐝 Our Words
           <span id="mob-wf-count" style="background:rgba(180,140,50,.18);border-radius:100px;padding:1px 6px;color:#d4a017;font-size:9px">0</span>
+          <span style="flex:1"></span>
+          <button id="mob-chat-btn" style="display:none">💬</button>
         </div>
         <div id="mob-wf-list" style="display:flex;flex-wrap:wrap;gap:3px"></div>
       </div>
@@ -699,7 +698,6 @@ body.light #td{color:#7a5000}
 <!-- Hidden compat divs for renderPlayers/renderWordLog -->
 <div id="mob-words-list" style="display:none"></div>
 <div id="mob-pl" style="display:none"></div>
-<button id="mob-chat-btn" style="display:none">💬</button>
 <!-- Keep old drawer hidden for JS compat -->
 <div id="mob-drawer" style="display:none">
   <div id="mob-handle" style="display:none"></div>
@@ -719,7 +717,7 @@ body.light #td{color:#7a5000}
 </div>
 
 <div id="toast" class="toast"></div>
-<button id="uimode-btn" title="Toggle Light / Dark">🌙</button>
+
 
 <!-- ════════════════════════════════════════════════════════ -->
 <script type="module">
@@ -747,7 +745,7 @@ const PM={
   green:{label:'Violet', dot:'#aa00ff',fillLight:'#7b1fa2',fillDark:'#ea80fc',prog:'#aa00ff'},
   gold: {label:'Amber',  dot:'#ffab00',fillLight:'#c06000',fillDark:'#ffd740',prog:'#ffab00'},
 };
-const GAME_DURATION=5*60*1000; // 5 minutes
+const GAME_DURATION=8*60*1000; // 8 minutes
 
 // ── Board themes ───────────────────────────────────────────
 const THEMES=[
@@ -1560,18 +1558,7 @@ document.getElementById('ri').addEventListener('keydown',e=>{if(e.key==='Enter')
 // Initial paint (no letters yet — just blank canvas)
 paint();
 
-// ── Light/Dark toggle ──────────────────────────────────────
-(function(){
-  const btn=document.getElementById('uimode-btn');
-  let light=false;
-  try{if(localStorage.getItem('sh_ui2')==='light'){light=true;document.body.classList.add('light');btn.textContent='☀️';btn.title='Switch to Dark';}}catch(e){}
-  btn.addEventListener('click',()=>{
-    light=!light;document.body.classList.toggle('light',light);
-    btn.textContent=light?'☀️':'🌙';btn.title=light?'Switch to Dark':'Switch to Light';
-    try{localStorage.setItem('sh_ui2',light?'light':'dark');}catch(e){}
-    paint();
-  });
-})();
+// Light/Dark toggle removed
 </script>
 </body>
 </html>
