@@ -674,7 +674,7 @@ body.light #td{color:#7a5000}
 </div>
 
 <!-- Mobile: floating chat overlay + trigger button -->
-<div id="mob-chat-overlay">
+<div id="mob-chat-overlay" style="display:none">
   <div class="mob-chat-handle" id="mob-chat-handle">💬 CHAT</div>
   <div class="mob-tabs">
     <button class="mob-tab active" data-tab="tchat">🛡 Team</button>
@@ -1487,7 +1487,18 @@ function startGame(rid){
     const chatOverlay=document.getElementById('mob-chat-overlay');
     const chatBtn=document.getElementById('mob-chat-btn');
     if(chatBtn)chatBtn.style.display='flex';
-    const toggleChat=()=>chatOverlay?.classList.toggle('open');
+    const toggleChat=()=>{
+      if(!chatOverlay)return;
+      const isOpen=chatOverlay.classList.contains('open');
+      if(isOpen){
+        chatOverlay.classList.remove('open');
+        // hide after transition ends so it doesn't linger
+        setTimeout(()=>{if(!chatOverlay.classList.contains('open'))chatOverlay.style.display='none';},300);
+      } else {
+        chatOverlay.style.display='flex';
+        requestAnimationFrame(()=>requestAnimationFrame(()=>chatOverlay.classList.add('open')));
+      }
+    };
     if(chatBtn)chatBtn.addEventListener('click',toggleChat);
     const chatHandle=document.getElementById('mob-chat-handle');
     if(chatHandle)chatHandle.addEventListener('click',toggleChat);
