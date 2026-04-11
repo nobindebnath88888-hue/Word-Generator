@@ -985,6 +985,7 @@ function resizeCanvas(){
 
 // ── Canvas interaction ─────────────────────────────────────
 function canvasClick(e){
+  if(e.isTrusted!==false && _touchFired && e.type==='click')return; // skip synthetic click after touch
   if(!GS||GS.winner||_validating)return;
   const cv=document.getElementById('gc');
   const rect=cv.getBoundingClientRect();
@@ -1008,10 +1009,14 @@ function canvasHover(e){
 
 function canvasLeave(){if(_hovHex!==null){_hovHex=null;paint();}}
 
+let _touchFired=false;
 function canvasTouch(e){
   e.preventDefault();
+  _touchFired=true;
   const t=e.touches[0];
   canvasClick({clientX:t.clientX,clientY:t.clientY});
+  // clear flag after synthetic click would have fired (~400ms)
+  setTimeout(()=>{_touchFired=false;},400);
 }
 
 // ── Word display (div-based, no keyboard) ─────────────────
