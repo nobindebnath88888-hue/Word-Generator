@@ -602,9 +602,9 @@ body.light #td{color:#7a5000}
           <!-- Team total bar -->
           <div class="vbar-wrap" style="border-left:1px solid rgba(59,130,246,.2);padding-left:6px">
             <div style="font-family:'Cinzel',serif;font-size:8px;color:#3b82f6;text-align:center;font-weight:700">TOT</div>
-            <div class="vbar-count my" id="vbar-total-my-count">0</div>
+            <div class="vbar-count my" id="vbar-total-left-count">0</div>
             <div class="vbar-track" style="width:14px">
-              <div class="vbar-fill my" id="vbar-total-my" style="height:0%"></div>
+              <div class="vbar-fill my" id="vbar-total-left" style="height:0%"></div>
             </div>
             <div class="vbar-name my">TEAM</div>
           </div>
@@ -621,9 +621,9 @@ body.light #td{color:#7a5000}
           <!-- Team total bar -->
           <div class="vbar-wrap" style="border-right:1px solid rgba(249,115,22,.2);padding-right:6px">
             <div style="font-family:'Cinzel',serif;font-size:8px;color:#f97316;text-align:center;font-weight:700">TOT</div>
-            <div class="vbar-count opp" id="vbar-total-opp-count">0</div>
+            <div class="vbar-count opp" id="vbar-total-right-count">0</div>
             <div class="vbar-track" style="width:14px">
-              <div class="vbar-fill opp" id="vbar-total-opp" style="height:0%"></div>
+              <div class="vbar-fill opp" id="vbar-total-right" style="height:0%"></div>
             </div>
             <div class="vbar-name opp">TEAM</div>
           </div>
@@ -1228,23 +1228,28 @@ function buildVbarGroup(containerId, colors, isMySide, allWords){
     </div>`;
   }).join('');
 
-  // ── Total bar for this team ──
+  // ── Total bar: find the correct TOT bar based on which container we filled ──
   const total=isMySide?myTotal:oppTotal;
   const totalPct=Math.min(100,Math.round(total/maxW*100));
-  const totalBarId=isMySide?'vbar-total-my':'vbar-total-opp';
-  const totalCountId=isMySide?'vbar-total-my-count':'vbar-total-opp-count';
+  // Map container ID to TOT bar ID
+  const totalBarId=containerId==='vbar-left'?'vbar-total-left':'vbar-total-right';
+  const totalCountId=containerId==='vbar-left'?'vbar-total-left-count':'vbar-total-right-count';
+  const totalFillCls=isMySide?'my':'opp';
   const tb=document.getElementById(totalBarId);
   const tc=document.getElementById(totalCountId);
-  if(tb)tb.style.height=totalPct+'%';
-  if(tc)tc.textContent=total;
+  if(tb){tb.style.height=totalPct+'%';tb.className='vbar-fill '+totalFillCls;}
+  if(tc){tc.textContent=total;tc.className='vbar-count '+totalFillCls;}
 }
 
 function updateProgress(){
   if(!GS)return;
   const myColors=COLORS.filter(c=>TEAMS[c]===_myTeam);
   const oppColors=COLORS.filter(c=>TEAMS[c]===_oppTeam);
-  buildVbarGroup('vbar-left', myColors, true, _myWords);
-  buildVbarGroup('vbar-right', oppColors, false, {});
+  // Team A profiles are on the LEFT, Team B on the RIGHT
+  // So bars must match: Team A player → my bars LEFT, Team B player → my bars RIGHT
+  const myOnLeft=_myTeam==='A';
+  buildVbarGroup(myOnLeft?'vbar-left':'vbar-right', myColors, true, _myWords);
+  buildVbarGroup(myOnLeft?'vbar-right':'vbar-left', oppColors, false, {});
 
   // Mobile horizontal bars
   const myTotal=Object.values(_myWords).length;
